@@ -4,7 +4,7 @@ import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import React from 'react';
 import { EmojiCategory } from '../EmojiCategory/EmojiCategory';
-import emojiCategories from '../emojis-de-v13.0.json';
+import { emojiCategories } from '../german-emoji-data';
 
 export function Popup() {
     return (
@@ -26,12 +26,13 @@ export function Popup() {
                     <Icon icon="fas fa-flag" />
                 </EmojiCategories>
                 <EmojiListContainer>
-                    {emojiCategories.map(({ category, emojis }) => {
+                    {emojiCategories.map(({ category, emojis }, i) => {
                         return (
                             <EmojiCategory
                                 key={category}
                                 category={category}
                                 emojis={emojis}
+                                isFirst={i === 0}
                             />
                         );
                     })}
