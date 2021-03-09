@@ -1,14 +1,19 @@
 import styled from '@emotion/styled';
-import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import React, { ReactElement, useState } from 'react';
-import { EmojiData } from '../emoji-types';
+import { EmojiData } from '../german-emoji-data';
+import Icon from '../Icon';
 
 interface Props {
     category: string;
     emojis: EmojiData[];
+    isFirst: boolean;
 }
 
-export function EmojiCategory({ category, emojis }: Props): ReactElement {
+export function EmojiCategory({
+    category,
+    emojis,
+    isFirst,
+}: Props): ReactElement {
     const [isOpen, setIsOpen] = useState(true);
 
     const handleHeaderClick = () => {
@@ -17,10 +22,10 @@ export function EmojiCategory({ category, emojis }: Props): ReactElement {
 
     return (
         <>
-            <EmojiCategoryHeader onClick={handleHeaderClick}>
+            <EmojiCategoryHeader onClick={handleHeaderClick} isFirst={isFirst}>
                 <span>{category}</span>
                 <Chevron open={isOpen} aria-hidden="true">
-                    <Icon icon="fas fa-chevron-right" />
+                    <Icon icon="fa-chevron-right" solid />
                 </Chevron>
             </EmojiCategoryHeader>
             {isOpen && (
@@ -34,10 +39,10 @@ export function EmojiCategory({ category, emojis }: Props): ReactElement {
     );
 }
 
-const EmojiCategoryHeader = styled.button`
+const EmojiCategoryHeader = styled.button<{ isFirst: boolean }>`
     display: flex;
     align-items: center;
-    padding: 16px 4px 4px;
+    padding: ${(props) => (props.isFirst ? '4px' : '16px')} 4px 4px;
     margin: 0;
     background: none;
     font-weight: bold;
@@ -58,13 +63,17 @@ const Chevron = styled.span<{ open: boolean }>`
     }
 `;
 
-const EmojiGrid = styled.div`
+const EmojiGrid = styled.ul`
     display: flex;
     flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
 `;
 
-const Emoji = styled.div`
+const Emoji = styled.li`
     width: 32px;
     height: 32px;
     padding: 4px;
+    margin: 0;
+    list-style-type: none;
 `;
