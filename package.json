@@ -41,6 +41,7 @@
         "@typescript-eslint/parser": "^4.17.0",
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.2.2",
+        "chayns-components": "^4.20.22",
         "eslint": "^7.21.0",
         "eslint-config-react-app": "^6.0.0",
         "eslint-plugin-flowtype": "^5.3.1",
