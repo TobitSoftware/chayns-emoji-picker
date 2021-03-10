@@ -1,41 +1,75 @@
 import styled from '@emotion/styled';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
+import { useCategoryTracker } from '../CategoryTracker';
 import { EmojiData } from '../german-emoji-data';
 import Icon from '../Icon';
 
 interface Props {
     category: string;
     emojis: EmojiData[];
-    isFirst: boolean;
+    index: number;
+    scrollContainer: HTMLDivElement | null;
 }
 
 export function EmojiCategory({
     category,
     emojis,
-    isFirst,
+    index,
+    scrollContainer,
 }: Props): ReactElement {
     const [isOpen, setIsOpen] = useState(true);
+
+    const updateCategory = useCategoryTracker((state) => state.update);
+
+    const [ref, inView, entry] = useInView({
+        root: scrollContainer,
+    });
+
+    const lastEntryRef = useRef(0);
+
+    useEffect(() => {
+        if (entry) {
+            const lastYPosition = lastEntryRef.current;
+            const currentYPosition = entry.boundingClientRect.y;
+            if (!inView) {
+                if (lastYPosition > currentYPosition) {
+                    updateCategory(index + 1);
+                }
+            } else {
+                if (lastYPosition < currentYPosition) {
+                    updateCategory(index);
+                }
+            }
+
+            lastEntryRef.current = entry.boundingClientRect.y;
+        }
+    }, [entry, inView, index, updateCategory]);
 
     const handleHeaderClick = () => {
         setIsOpen((isOpen) => !isOpen);
     };
 
     return (
-        <>
-            <EmojiCategoryHeader onClick={handleHeaderClick} isFirst={isFirst}>
+        <div ref={ref}>
+            <EmojiCategoryHeader
+                onClick={handleHeaderClick}
+                isFirst={index === 0}
+            >
                 <span>{category}</span>
                 <Chevron open={isOpen} aria-hidden="true">
                     <Icon icon="fa-chevron-right" solid />
                 </Chevron>
             </EmojiCategoryHeader>
-            {isOpen && (
-                <EmojiGrid>
-                    {emojis.map(([emoji]) => (
-                        <Emoji key={emoji}>{emoji}</Emoji>
-                    ))}
-                </EmojiGrid>
-            )}
-        </>
+            <EmojiGrid hide={!isOpen}>
+                {emojis.map(([emoji]) => (
+                    <Emoji>
+                        <AdaptiveEmoji key={emoji} emoji={emoji} />
+                    </Emoji>
+                ))}
+            </EmojiGrid>
+        </div>
     );
 }
 
@@ -63,16 +97,16 @@ const Chevron = styled.span<{ open: boolean }>`
     }
 `;
 
-const EmojiGrid = styled.ul`
-    display: flex;
+const EmojiGrid = styled.ul<{ hide: boolean }>`
+    display: ${(props) => (props.hide ? 'none' : 'flex')};
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
 `;
 
 const Emoji = styled.li`
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     padding: 4px;
     margin: 0;
     list-style-type: none;

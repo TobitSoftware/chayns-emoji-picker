@@ -2,11 +2,16 @@ import styled from '@emotion/styled';
 import ChooseButton from 'chayns-components/lib/react-chayns-button/component/ChooseButton.js';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import React from 'react';
+import React, { useRef } from 'react';
+import { useCategoryTracker } from '../CategoryTracker';
 import { EmojiCategory } from '../EmojiCategory/EmojiCategory';
 import { emojiCategories } from '../german-emoji-data';
 
 export function Popup() {
+    const currentCategory = useCategoryTracker((state) => state.currentIndex);
+
+    const scrollerRef = useRef<HTMLDivElement | null>(null);
+
     return (
         <PopupContainer>
             <SearchBarContainer>
@@ -14,25 +19,96 @@ export function Popup() {
             </SearchBarContainer>
             <EmojiList>
                 <EmojiCategories>
-                    <Icon icon="fas fa-history" />
-                    <Icon icon="fas fa-grin-alt" />
-                    <Icon icon="fas fa-child" />
-                    <Icon icon="fas fa-leaf" />
-                    <Icon icon="fas fa-mug-tea" />
-                    <Icon icon="fas fa-plane" />
-                    <Icon icon="fas fa-futbol" />
-                    <Icon icon="fas fa-lightbulb" />
-                    <Icon icon="fas fa-hashtag" />
-                    <Icon icon="fas fa-flag" />
+                    <Icon
+                        icon="fas fa-history"
+                        className={
+                            currentCategory === 0
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-grin-alt"
+                        className={
+                            currentCategory === 1
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-child"
+                        className={
+                            currentCategory === 2
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-leaf"
+                        className={
+                            currentCategory === 3
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-mug-tea"
+                        className={
+                            currentCategory === 4
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-plane"
+                        className={
+                            currentCategory === 5
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-futbol"
+                        className={
+                            currentCategory === 6
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-lightbulb"
+                        className={
+                            currentCategory === 7
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-hashtag"
+                        className={
+                            currentCategory === 8
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                    <Icon
+                        icon="fas fa-flag"
+                        className={
+                            currentCategory === 9
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
                 </EmojiCategories>
-                <EmojiListContainer>
+                <EmojiListContainer ref={scrollerRef}>
                     {emojiCategories.map(({ category, emojis }, i) => {
                         return (
                             <EmojiCategory
                                 key={category}
                                 category={category}
                                 emojis={emojis}
-                                isFirst={i === 0}
+                                index={i + 1}
+                                scrollContainer={scrollerRef.current}
                             />
                         );
                     })}
@@ -106,25 +182,6 @@ const EmojiListContainer = styled.div`
     flex: 1;
     overflow-y: auto;
     padding: 8px;
-`;
-
-const EmojiCategoryHeader = styled.div`
-    padding: 16px 4px 4px;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 12px;
-    color: var(--chayns-color--006);
-`;
-
-const EmojiGrid = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-`;
-
-const Emoji = styled.div`
-    width: 32px;
-    height: 32px;
-    padding: 4px;
 `;
 
 const BottomBar = styled.div`
