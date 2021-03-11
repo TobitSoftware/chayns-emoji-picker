@@ -2,13 +2,41 @@ import styled from '@emotion/styled';
 import ChooseButton from 'chayns-components/lib/react-chayns-button/component/ChooseButton.js';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
+import { Virtuoso } from 'react-virtuoso';
+import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
 import { useCategoryTracker } from '../CategoryTracker';
-import { EmojiCategory } from '../EmojiCategory/EmojiCategory';
-import { emojiCategories } from '../german-emoji-data';
+import { emojiCategories, EmojiData } from '../german-emoji-data';
 
 export function Popup() {
     const currentCategory = useCategoryTracker((state) => state.currentIndex);
+
+    const [elements, groupCounts, categoryNames] = useMemo(() => {
+        const emojiRows = [] as Array<EmojiData[]>;
+        const groupCounts = [] as number[];
+
+        for (const { emojis } of emojiCategories) {
+            emojiRows.push([]);
+
+            for (const emoji of emojis) {
+                const lastGroup = emojiRows[emojiRows.length - 1];
+
+                if (lastGroup.length < 8) {
+                    lastGroup.push(emoji);
+                } else {
+                    emojiRows.push([emoji]);
+                }
+            }
+
+            groupCounts.push(Math.ceil(emojis.length / 8));
+        }
+
+        const categoryNames = emojiCategories.map(
+            (category) => category.category
+        );
+
+        return [emojiRows, groupCounts, categoryNames];
+    }, []);
 
     const scrollerRef = useRef<HTMLDivElement | null>(null);
 
@@ -101,7 +129,30 @@ export function Popup() {
                     />
                 </EmojiCategories>
                 <EmojiListContainer ref={scrollerRef}>
-                    {emojiCategories.map(({ category, emojis }, i) => {
+                    <Virtuoso
+                        groupCounts={groupCounts}
+                        groupContent={(index: number) => (
+                            <div>{categoryNames[index]}</div>
+                        )}
+                        overscan={500}
+                        itemContent={(index) => {
+                            const row = elements[index];
+
+                            console.log(row);
+
+                            return (
+                                <div style={{ display: 'flex' }}>
+                                    {row?.map(([e]) => (
+                                        <Emoji>
+                                            <AdaptiveEmoji emoji={e} />
+                                        </Emoji>
+                                    ))}
+                                </div>
+                            );
+                        }}
+                    />
+
+                    {/* {emojiCategories.map(({ category, emojis }, i) => {
                         return (
                             <EmojiCategory
                                 key={category}
@@ -111,7 +162,7 @@ export function Popup() {
                                 scrollContainer={scrollerRef.current}
                             />
                         );
-                    })}
+                    })} */}
                 </EmojiListContainer>
             </EmojiList>
             <BottomBar>
@@ -190,4 +241,12 @@ const BottomBar = styled.div`
     align-items: center;
     justify-content: flex-end;
     background-color: var(--chayns-color--001);
+`;
+
+const Emoji = styled.li`
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+    margin: 0;
+    list-style-type: none;
 `;
