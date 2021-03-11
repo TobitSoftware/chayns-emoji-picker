@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import ChooseButton from 'chayns-components/lib/react-chayns-button/component/ChooseButton.js';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import React, { useMemo, useRef } from 'react';
@@ -45,114 +44,31 @@ export function Popup() {
             <SearchBarContainer>
                 <Input iconLeft="far fa-search" design={Input.BORDER_DESIGN} />
             </SearchBarContainer>
-            <EmojiList>
-                <EmojiCategories>
-                    <Icon
-                        icon="fas fa-history"
-                        className={
-                            currentCategory === 0
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-grin-alt"
-                        className={
-                            currentCategory === 1
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-child"
-                        className={
-                            currentCategory === 2
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-leaf"
-                        className={
-                            currentCategory === 3
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-mug-tea"
-                        className={
-                            currentCategory === 4
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-plane"
-                        className={
-                            currentCategory === 5
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-futbol"
-                        className={
-                            currentCategory === 6
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-lightbulb"
-                        className={
-                            currentCategory === 7
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-hashtag"
-                        className={
-                            currentCategory === 8
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                    <Icon
-                        icon="fas fa-flag"
-                        className={
-                            currentCategory === 9
-                                ? 'chayns__color--009i'
-                                : undefined
-                        }
-                    />
-                </EmojiCategories>
-                <EmojiListContainer ref={scrollerRef}>
-                    <Virtuoso
-                        groupCounts={groupCounts}
-                        groupContent={(index: number) => (
-                            <div>{categoryNames[index]}</div>
-                        )}
-                        overscan={500}
-                        itemContent={(index) => {
-                            const row = elements[index];
+            <EmojiListContainer ref={scrollerRef}>
+                <Virtuoso
+                    groupCounts={groupCounts}
+                    groupContent={(index: number) => (
+                        <div>{categoryNames[index]}</div>
+                    )}
+                    overscan={500}
+                    itemContent={(index) => {
+                        const row = elements[index];
 
-                            console.log(row);
+                        console.log(row);
 
-                            return (
-                                <div style={{ display: 'flex' }}>
-                                    {row?.map(([e]) => (
-                                        <Emoji>
-                                            <AdaptiveEmoji emoji={e} />
-                                        </Emoji>
-                                    ))}
-                                </div>
-                            );
-                        }}
-                    />
+                        return (
+                            <div style={{ display: 'flex' }}>
+                                {row?.map(([e]) => (
+                                    <Emoji>
+                                        <AdaptiveEmoji emoji={e} />
+                                    </Emoji>
+                                ))}
+                            </div>
+                        );
+                    }}
+                />
 
-                    {/* {emojiCategories.map(({ category, emojis }, i) => {
+                {/* {emojiCategories.map(({ category, emojis }, i) => {
                         return (
                             <EmojiCategory
                                 key={category}
@@ -163,11 +79,109 @@ export function Popup() {
                             />
                         );
                     })} */}
-                </EmojiListContainer>
-            </EmojiList>
-            <BottomBar>
-                <ChooseButton>🖐️ Hauttöne</ChooseButton>
-            </BottomBar>
+            </EmojiListContainer>
+            <EmojiCategories>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-history"
+                        className={
+                            currentCategory === 0
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-grin-alt"
+                        className={
+                            currentCategory === 1
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-child"
+                        className={
+                            currentCategory === 2
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-leaf"
+                        className={
+                            currentCategory === 3
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-mug-tea"
+                        className={
+                            currentCategory === 4
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-plane"
+                        className={
+                            currentCategory === 5
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-futbol"
+                        className={
+                            currentCategory === 6
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-lightbulb"
+                        className={
+                            currentCategory === 7
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-hashtag"
+                        className={
+                            currentCategory === 8
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+                <CategoryButton>
+                    <Icon
+                        icon="fas fa-flag"
+                        className={
+                            currentCategory === 9
+                                ? 'chayns__color--009i'
+                                : undefined
+                        }
+                    />
+                </CategoryButton>
+            </EmojiCategories>
         </PopupContainer>
     );
 }
@@ -177,10 +191,11 @@ const PopupContainer = styled.div`
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
     height: 420px;
-    width: 380px;
+    width: 320px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
     * {
         box-sizing: border-box;
 
@@ -207,40 +222,36 @@ const PopupContainer = styled.div`
 
 const SearchBarContainer = styled.div`
     padding: 8px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-`;
-
-const EmojiList = styled.div`
-    flex: 1;
-    display: flex;
-    overflow: hidden;
 `;
 
 const EmojiCategories = styled.div`
     box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.05);
     display: flex;
-    flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    width: 48px;
+    padding: 4px 8px;
+    border-top: 1px solid var(--chayns-color--002);
 
     i.react-chayns-icon {
-        color: var(--chayns-color--004);
+        color: var(--chayns-color--003);
     }
+`;
+
+const CategoryButton = styled.button`
+    padding: 0;
+    margin: 0;
+    background: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 const EmojiListContainer = styled.div`
     flex: 1;
     overflow-y: auto;
-    padding: 8px;
-`;
-
-const BottomBar = styled.div`
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    background-color: var(--chayns-color--001);
+    padding: 0 8px;
 `;
 
 const Emoji = styled.li`
