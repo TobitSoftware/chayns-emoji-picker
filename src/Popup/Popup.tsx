@@ -40,7 +40,9 @@ export function Popup() {
     const scrollerRef = useRef<HTMLDivElement | null>(null);
 
     const renderGroup = useCallback(
-        (index: number) => <div>{categoryNames[index]}</div>,
+        (index: number) => (
+            <EmojiCategoryHeader>{categoryNames[index]}</EmojiCategoryHeader>
+        ),
         [categoryNames]
     );
 
@@ -73,14 +75,10 @@ export function Popup() {
                     placeholder="Finden"
                 />
             </SearchBarContainer>
-            <WhiteGradientWrapper>
-                <WhiteGradient />
-            </WhiteGradientWrapper>
             <EmojiListContainer ref={scrollerRef}>
                 <GroupedVirtuoso
                     groupCounts={groupCounts}
                     groupContent={renderGroup}
-                    overscan={500}
                     itemContent={renderItem}
                 />
             </EmojiListContainer>
@@ -225,26 +223,7 @@ const PopupContainer = styled.div`
 `;
 
 const SearchBarContainer = styled.div`
-    padding: 8px 8px 0;
-`;
-
-const WhiteGradientWrapper = styled.div`
-    position: relative;
-`;
-
-const WhiteGradient = styled.div`
-    position: absolute;
-    z-index: 10;
-
-    width: 100%;
-    height: 20px;
-
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(255, 255, 255, 1) 25%,
-        rgba(255, 255, 255, 0) 100%
-    );
+    padding: 8px 8px;
 `;
 
 const EmojiCategories = styled.div`
@@ -258,6 +237,16 @@ const EmojiCategories = styled.div`
     i.react-chayns-icon {
         color: var(--chayns-color--003);
     }
+`;
+
+const EmojiCategoryHeader = styled.div`
+    color: var(--chayns-color--006);
+    background: linear-gradient(
+        var(--chayns-color--000),
+        rgba(var(--chayns-color-rgb--000), 0.84)
+    );
+    backdrop-filter: blur(8px);
+    padding-bottom: 4px;
 `;
 
 const CategoryButton = styled.button`
