@@ -4,17 +4,14 @@ import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
-import { useCategoryTracker } from '../CategoryTracker';
 import { emojiCategories, EmojiData } from '../german-emoji-data';
 
 export function Popup() {
-    const currentCategory = useCategoryTracker((state) => state.currentIndex);
-
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
 
-    const [cat, setCat] = useState(0);
+    const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
 
-    const [elements, groupCounts, categoryNames] = useMemo(() => {
+    const [elements, groupCounts, categoryNames, emojiArray] = useMemo(() => {
         const emojiRows = [] as Array<EmojiData[]>;
         const groupCounts = [] as number[];
 
@@ -38,10 +35,10 @@ export function Popup() {
             (category) => category.category
         );
 
-        return [emojiRows, groupCounts, categoryNames];
-    }, []);
+        const emojiArray = emojiRows.flat().map(([emoji]) => emoji);
 
-    const scrollerRef = useRef<HTMLDivElement | null>(null);
+        return [emojiRows, groupCounts, categoryNames, emojiArray];
+    }, []);
 
     const renderGroup = useCallback(
         (index: number) => (
@@ -56,18 +53,40 @@ export function Popup() {
 
             return (
                 <div style={{ display: 'flex' }}>
-                    {row?.map(([e], index) => (
+                    {row?.map(([e]) => (
                         <Emoji key={e}>
                             <AdaptiveEmoji
                                 emoji={e}
-                                index={index + rowIndex * 8}
+                                index={emojiArray.indexOf(e)}
                             />
                         </Emoji>
                     ))}
                 </div>
             );
         },
-        [elements]
+        [elements, emojiArray]
+    );
+
+    const handleRangeChange = useCallback(
+        ({ startIndex, endIndex }) => {
+            console.log({ startIndex, endIndex });
+
+            let activeGroupIndex = 0;
+            let emojiIndex = 0;
+
+            for (let i = 0; i < groupCounts.length; i++) {
+                const groupCount = groupCounts[i];
+
+                if (activeGroupIndex + groupCount > startIndex) {
+                    emojiIndex = i;
+                    break;
+                }
+                activeGroupIndex += groupCount;
+            }
+
+            setActiveCategoryIndex(emojiIndex);
+        },
+        [groupCounts]
     );
 
     return (
@@ -79,30 +98,13 @@ export function Popup() {
                     placeholder="Finden"
                 />
             </SearchBarContainer>
-            <EmojiListContainer ref={scrollerRef}>
+            <EmojiListContainer>
                 <GroupedVirtuoso
                     ref={listHandle}
                     groupCounts={groupCounts}
                     groupContent={renderGroup}
                     itemContent={renderItem}
-                    rangeChanged={({ startIndex, endIndex }) => {
-                        console.log({ startIndex, endIndex });
-
-                        let activeGroupIndex = 0;
-                        let emojiIndex = 0;
-
-                        for (let i = 0; i < groupCounts.length; i++) {
-                            const groupCount = groupCounts[i];
-
-                            if (activeGroupIndex + groupCount > startIndex) {
-                                emojiIndex = i;
-                                break;
-                            }
-                            activeGroupIndex += groupCount;
-                        }
-
-                        setCat(emojiIndex);
-                    }}
+                    rangeChanged={handleRangeChange}
                 />
             </EmojiListContainer>
             <EmojiCategories>
@@ -126,7 +128,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-history"
                         className={
-                            cat === 0 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 0
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -150,7 +154,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-grin-alt"
                         className={
-                            cat === 1 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 1
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -174,7 +180,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-child"
                         className={
-                            cat === 2 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 2
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -198,7 +206,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-leaf"
                         className={
-                            cat === 3 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 3
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -222,7 +232,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-mug-tea"
                         className={
-                            cat === 4 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 4
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -246,7 +258,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-plane"
                         className={
-                            cat === 5 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 5
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -270,7 +284,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-futbol"
                         className={
-                            cat === 6 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 6
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -294,7 +310,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-lightbulb"
                         className={
-                            cat === 7 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 7
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -318,7 +336,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-hashtag"
                         className={
-                            cat === 8 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 8
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
@@ -342,7 +362,9 @@ export function Popup() {
                     <Icon
                         icon="fas fa-flag"
                         className={
-                            cat === 9 ? 'chayns__color--009i' : undefined
+                            activeCategoryIndex === 9
+                                ? 'chayns__color--009i'
+                                : undefined
                         }
                     />
                 </CategoryButton>
