@@ -1,20 +1,34 @@
 import styled from '@emotion/styled';
-import React, { ReactElement } from 'react';
-import { parse } from 'twemoji-parser';
+import React, { CSSProperties, ReactElement } from 'react';
 
 interface Props {
     emoji: string;
+    index: number;
 }
 
 const isWindows =
     typeof window !== 'undefined' && /win/i.test(navigator.platform);
 
-export function AdaptiveEmoji({ emoji }: Props): ReactElement {
+const SPRITESHEET_COLUMNS = 42;
+const SPRITESHEET_ROWS = 43;
+const EMOJI_SIZE = 28;
+
+export function AdaptiveEmoji({ emoji, index }: Props): ReactElement {
     const shouldUseTwemoji = isWindows;
 
-    const style = shouldUseTwemoji
-        ? { backgroundImage: `url(${parse(emoji)[0].url})` }
-        : undefined;
+    let style: CSSProperties | undefined;
+
+    if (shouldUseTwemoji) {
+        const column = index % SPRITESHEET_COLUMNS;
+        const row = Math.floor(index / SPRITESHEET_COLUMNS);
+
+        const backgroundXPosition = column * EMOJI_SIZE;
+        const backgroundYPosition = row * EMOJI_SIZE;
+
+        style = {
+            backgroundPosition: `-${backgroundXPosition}px -${backgroundYPosition}px`,
+        };
+    }
 
     return (
         <EmojiContainer className="emoji" style={style}>
@@ -28,7 +42,9 @@ export function AdaptiveEmoji({ emoji }: Props): ReactElement {
 const EmojiContainer = styled.div`
     height: 100%;
 
+    background-image: url(https://awesome-swartz-cfc28f.netlify.app/twemoji-spritesheet.png);
     background-repeat: no-repeat;
+    background-size: ${SPRITESHEET_COLUMNS * 100}% ${SPRITESHEET_ROWS * 100}%;
 `;
 
 const NativeEmojiSpan = styled.span<{ visuallyHidden: boolean }>`

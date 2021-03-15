@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import React, { useMemo, useRef } from 'react';
-import { Virtuoso } from 'react-virtuoso';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { GroupedVirtuoso } from 'react-virtuoso';
 import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
 import { useCategoryTracker } from '../CategoryTracker';
 import { emojiCategories, EmojiData } from '../german-emoji-data';
@@ -39,46 +39,50 @@ export function Popup() {
 
     const scrollerRef = useRef<HTMLDivElement | null>(null);
 
+    const renderGroup = useCallback(
+        (index: number) => <div>{categoryNames[index]}</div>,
+        [categoryNames]
+    );
+
+    const renderItem = useCallback(
+        (rowIndex) => {
+            const row = elements[rowIndex];
+
+            return (
+                <div style={{ display: 'flex' }}>
+                    {row?.map(([e], index) => (
+                        <Emoji key={e}>
+                            <AdaptiveEmoji
+                                emoji={e}
+                                index={index + rowIndex * 8}
+                            />
+                        </Emoji>
+                    ))}
+                </div>
+            );
+        },
+        [elements]
+    );
+
     return (
         <PopupContainer>
             <SearchBarContainer>
-                <Input iconLeft="far fa-search" design={Input.BORDER_DESIGN} />
-            </SearchBarContainer>
-            <EmojiListContainer ref={scrollerRef}>
-                <Virtuoso
-                    groupCounts={groupCounts}
-                    groupContent={(index: number) => (
-                        <div>{categoryNames[index]}</div>
-                    )}
-                    overscan={500}
-                    itemContent={(index) => {
-                        const row = elements[index];
-
-                        console.log(row);
-
-                        return (
-                            <div style={{ display: 'flex' }}>
-                                {row?.map(([e]) => (
-                                    <Emoji>
-                                        <AdaptiveEmoji emoji={e} />
-                                    </Emoji>
-                                ))}
-                            </div>
-                        );
-                    }}
+                <Input
+                    iconLeft="far fa-search"
+                    design={Input.BORDER_DESIGN}
+                    placeholder="Finden"
                 />
-
-                {/* {emojiCategories.map(({ category, emojis }, i) => {
-                        return (
-                            <EmojiCategory
-                                key={category}
-                                category={category}
-                                emojis={emojis}
-                                index={i + 1}
-                                scrollContainer={scrollerRef.current}
-                            />
-                        );
-                    })} */}
+            </SearchBarContainer>
+            <WhiteGradientWrapper>
+                <WhiteGradient />
+            </WhiteGradientWrapper>
+            <EmojiListContainer ref={scrollerRef}>
+                <GroupedVirtuoso
+                    groupCounts={groupCounts}
+                    groupContent={renderGroup}
+                    overscan={500}
+                    itemContent={renderItem}
+                />
             </EmojiListContainer>
             <EmojiCategories>
                 <CategoryButton>
@@ -221,7 +225,26 @@ const PopupContainer = styled.div`
 `;
 
 const SearchBarContainer = styled.div`
-    padding: 8px;
+    padding: 8px 8px 0;
+`;
+
+const WhiteGradientWrapper = styled.div`
+    position: relative;
+`;
+
+const WhiteGradient = styled.div`
+    position: absolute;
+    z-index: 10;
+
+    width: 100%;
+    height: 20px;
+
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 1) 25%,
+        rgba(255, 255, 255, 0) 100%
+    );
 `;
 
 const EmojiCategories = styled.div`
