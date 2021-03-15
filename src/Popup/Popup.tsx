@@ -1,14 +1,18 @@
 import styled from '@emotion/styled';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import React, { useCallback, useMemo, useRef } from 'react';
-import { GroupedVirtuoso } from 'react-virtuoso';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
 import { useCategoryTracker } from '../CategoryTracker';
 import { emojiCategories, EmojiData } from '../german-emoji-data';
 
 export function Popup() {
     const currentCategory = useCategoryTracker((state) => state.currentIndex);
+
+    const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
+
+    const [cat, setCat] = useState(0);
 
     const [elements, groupCounts, categoryNames] = useMemo(() => {
         const emojiRows = [] as Array<EmojiData[]>;
@@ -77,109 +81,268 @@ export function Popup() {
             </SearchBarContainer>
             <EmojiListContainer ref={scrollerRef}>
                 <GroupedVirtuoso
+                    ref={listHandle}
                     groupCounts={groupCounts}
                     groupContent={renderGroup}
                     itemContent={renderItem}
+                    rangeChanged={({ startIndex, endIndex }) => {
+                        console.log({ startIndex, endIndex });
+
+                        let activeGroupIndex = 0;
+                        let emojiIndex = 0;
+
+                        for (let i = 0; i < groupCounts.length; i++) {
+                            const groupCount = groupCounts[i];
+
+                            if (activeGroupIndex + groupCount > startIndex) {
+                                emojiIndex = i;
+                                break;
+                            }
+                            activeGroupIndex += groupCount;
+                        }
+
+                        setCat(emojiIndex);
+                    }}
                 />
             </EmojiListContainer>
             <EmojiCategories>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 0;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-history"
                         className={
-                            currentCategory === 0
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 0 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 1;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-grin-alt"
                         className={
-                            currentCategory === 1
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 1 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 2;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-child"
                         className={
-                            currentCategory === 2
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 2 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 3;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-leaf"
                         className={
-                            currentCategory === 3
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 3 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 4;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-mug-tea"
                         className={
-                            currentCategory === 4
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 4 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 5;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-plane"
                         className={
-                            currentCategory === 5
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 5 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 6;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-futbol"
                         className={
-                            currentCategory === 6
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 6 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 7;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-lightbulb"
                         className={
-                            currentCategory === 7
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 7 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 8;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-hashtag"
                         className={
-                            currentCategory === 8
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 8 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
-                <CategoryButton>
+                <CategoryButton
+                    onClick={() => {
+                        const index = 9;
+
+                        const listIndex = groupCounts
+                            .slice(0, index)
+                            .reduce(
+                                (count, groupCount) => count + groupCount,
+                                0
+                            );
+
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
+                >
                     <Icon
                         icon="fas fa-flag"
                         className={
-                            currentCategory === 9
-                                ? 'chayns__color--009i'
-                                : undefined
+                            cat === 9 ? 'chayns__color--009i' : undefined
                         }
                     />
                 </CategoryButton>
