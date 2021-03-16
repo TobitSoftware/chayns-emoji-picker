@@ -134,7 +134,7 @@ export function Popup() {
             }
 
             return (
-                <div style={{ display: 'flex' }}>
+                <EmojiRow>
                     {row?.map((emojiData) => {
                         const [e] = emojiData;
 
@@ -152,7 +152,7 @@ export function Popup() {
                             </Emoji>
                         );
                     })}
-                </div>
+                </EmojiRow>
             );
         },
         [emojiArray, markRecent, withRecentsElements]
@@ -220,7 +220,7 @@ export function Popup() {
                         icon="fas fa-history"
                         className={
                             activeCategoryIndex === 0
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -246,7 +246,7 @@ export function Popup() {
                         icon="fas fa-grin-alt"
                         className={
                             activeCategoryIndex === 1
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -272,7 +272,7 @@ export function Popup() {
                         icon="fas fa-child"
                         className={
                             activeCategoryIndex === 2
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -298,7 +298,7 @@ export function Popup() {
                         icon="fas fa-leaf"
                         className={
                             activeCategoryIndex === 3
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -324,7 +324,7 @@ export function Popup() {
                         icon="fas fa-mug-tea"
                         className={
                             activeCategoryIndex === 4
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -350,7 +350,7 @@ export function Popup() {
                         icon="fas fa-plane"
                         className={
                             activeCategoryIndex === 5
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -376,7 +376,7 @@ export function Popup() {
                         icon="fas fa-futbol"
                         className={
                             activeCategoryIndex === 6
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -402,7 +402,7 @@ export function Popup() {
                         icon="fas fa-lightbulb"
                         className={
                             activeCategoryIndex === 7
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -428,7 +428,7 @@ export function Popup() {
                         icon="fas fa-hashtag"
                         className={
                             activeCategoryIndex === 8
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -454,7 +454,7 @@ export function Popup() {
                         icon="fas fa-flag"
                         className={
                             activeCategoryIndex === 9
-                                ? 'chayns__color--009i'
+                                ? 'chayns__color--006i'
                                 : undefined
                         }
                     />
@@ -499,7 +499,7 @@ const PopupContainer = styled.div`
 `;
 
 const SearchBarContainer = styled.div`
-    padding: 8px 8px;
+    padding: 8px 8px 0;
 `;
 
 const EmojiCategories = styled.div`
@@ -522,7 +522,7 @@ const EmojiCategoryHeader = styled.div`
         rgba(var(--chayns-color-rgb--000), 0.84)
     );
     backdrop-filter: blur(8px);
-    padding-bottom: 4px;
+    padding: 12px 10px 4px;
 `;
 
 const CategoryButton = styled.button`
@@ -539,7 +539,6 @@ const CategoryButton = styled.button`
 const EmojiListContainer = styled.div`
     flex: 1;
     overflow-y: auto;
-    padding: 0 8px;
 `;
 
 const Emoji = styled.li`
@@ -555,4 +554,9 @@ const EmptyCategoryContainer = styled.p`
     padding: 12px 40px;
     font-size: 84%;
     color: var(--chayns-color--004);
+`;
+
+const EmojiRow = styled.div`
+    display: flex;
+    padding: 0 8px;
 `;
