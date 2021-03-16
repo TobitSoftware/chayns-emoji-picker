@@ -1,13 +1,52 @@
 import styled from '@emotion/styled';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
 import { emojiCategories, EmojiData } from '../german-emoji-data';
+import { isLocalStorageAvailable } from '../isLocalStorageAvailable';
+
+const RECENTS_KEY = 'chayns-emoji-picker__recents';
 
 export function Popup() {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
+
+    const [recents, setRecents] = useState<EmojiData[]>(() => {
+        if (isLocalStorageAvailable()) {
+            const entry = localStorage.getItem(RECENTS_KEY);
+
+            if (entry) {
+                const data: EmojiData[] = JSON.parse(entry);
+
+                return data;
+            }
+            return [] as EmojiData[];
+        }
+        return [] as EmojiData[];
+    });
+
+    useEffect(() => {
+        if (isLocalStorageAvailable()) {
+            const recentsAsJson = JSON.stringify(recents);
+
+            localStorage.setItem(RECENTS_KEY, recentsAsJson);
+        }
+    }, [recents]);
+
+    const markRecent = useCallback((data: EmojiData) => {
+        setRecents((currentRecents) => {
+            const recs = currentRecents.filter((e) => e[0] !== data[0]);
+
+            return [data, ...recs].slice(0, 32);
+        });
+    }, []);
 
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
 
@@ -40,31 +79,83 @@ export function Popup() {
         return [emojiRows, groupCounts, categoryNames, emojiArray];
     }, []);
 
+    const [
+        withRecentsElements,
+        withRecentsGroupCounts,
+        withRecentsCategoryNames,
+    ] = useMemo(() => {
+        const emojiRows = [] as Array<EmojiData[]>;
+
+        emojiRows.push([]);
+
+        for (const emoji of recents) {
+            const lastGroup = emojiRows[emojiRows.length - 1];
+
+            if (lastGroup.length < 8) {
+                lastGroup.push(emoji);
+            } else {
+                emojiRows.push([emoji]);
+            }
+        }
+
+        const withRecentsGroupCounts = [emojiRows.length, ...groupCounts];
+
+        const withRecentsCategoryNames = ['Häufig verwendet', ...categoryNames];
+
+        const withRecentsEmojiRows = [...emojiRows, ...elements];
+
+        return [
+            withRecentsEmojiRows,
+            withRecentsGroupCounts,
+            withRecentsCategoryNames,
+        ];
+    }, [categoryNames, elements, groupCounts, recents]);
+
     const renderGroup = useCallback(
         (index: number) => (
-            <EmojiCategoryHeader>{categoryNames[index]}</EmojiCategoryHeader>
+            <EmojiCategoryHeader>
+                {withRecentsCategoryNames[index]}
+            </EmojiCategoryHeader>
         ),
-        [categoryNames]
+        [withRecentsCategoryNames]
     );
 
     const renderItem = useCallback(
         (rowIndex) => {
-            const row = elements[rowIndex];
+            const row = withRecentsElements[rowIndex];
+
+            if (!row.length) {
+                return (
+                    <EmptyCategoryContainer>
+                        Hier werden Deine meist benutzten Emojis angezeigt
+                        werden.
+                    </EmptyCategoryContainer>
+                );
+            }
 
             return (
                 <div style={{ display: 'flex' }}>
-                    {row?.map(([e]) => (
-                        <Emoji key={e}>
-                            <AdaptiveEmoji
-                                emoji={e}
-                                index={emojiArray.indexOf(e)}
-                            />
-                        </Emoji>
-                    ))}
+                    {row?.map((emojiData) => {
+                        const [e] = emojiData;
+
+                        return (
+                            <Emoji
+                                key={e}
+                                onClick={() => {
+                                    markRecent(emojiData);
+                                }}
+                            >
+                                <AdaptiveEmoji
+                                    emoji={e}
+                                    index={emojiArray.indexOf(e)}
+                                />
+                            </Emoji>
+                        );
+                    })}
                 </div>
             );
         },
-        [elements, emojiArray]
+        [emojiArray, markRecent, withRecentsElements]
     );
 
     const handleRangeChange = useCallback(
@@ -74,8 +165,8 @@ export function Popup() {
             let activeGroupIndex = 0;
             let emojiIndex = 0;
 
-            for (let i = 0; i < groupCounts.length; i++) {
-                const groupCount = groupCounts[i];
+            for (let i = 0; i < withRecentsGroupCounts.length; i++) {
+                const groupCount = withRecentsGroupCounts[i];
 
                 if (activeGroupIndex + groupCount > startIndex) {
                     emojiIndex = i;
@@ -86,7 +177,7 @@ export function Popup() {
 
             setActiveCategoryIndex(emojiIndex);
         },
-        [groupCounts]
+        [withRecentsGroupCounts]
     );
 
     return (
@@ -101,7 +192,7 @@ export function Popup() {
             <EmojiListContainer>
                 <GroupedVirtuoso
                     ref={listHandle}
-                    groupCounts={groupCounts}
+                    groupCounts={withRecentsGroupCounts}
                     groupContent={renderGroup}
                     itemContent={renderItem}
                     rangeChanged={handleRangeChange}
@@ -112,7 +203,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 0;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -138,7 +229,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 1;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -164,7 +255,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 2;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -190,7 +281,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 3;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -216,7 +307,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 4;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -242,7 +333,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 5;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -268,7 +359,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 6;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -294,7 +385,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 7;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -320,7 +411,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 8;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -346,7 +437,7 @@ export function Popup() {
                     onClick={() => {
                         const index = 9;
 
-                        const listIndex = groupCounts
+                        const listIndex = withRecentsGroupCounts
                             .slice(0, index)
                             .reduce(
                                 (count, groupCount) => count + groupCount,
@@ -457,4 +548,11 @@ const Emoji = styled.li`
     padding: 4px;
     margin: 0;
     list-style-type: none;
+`;
+
+const EmptyCategoryContainer = styled.p`
+    text-align: center;
+    padding: 12px 40px;
+    font-size: 84%;
+    color: var(--chayns-color--004);
 `;
