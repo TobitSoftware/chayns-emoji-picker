@@ -26,6 +26,7 @@
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.1.5",
         "@react-aria/interactions": "^3.3.3",
+        "fuse.js": "^6.4.6",
         "react-focus-lock": "^2.5.0",
         "react-intersection-observer": "^8.31.0",
         "react-virtuoso": "^1.5.14",

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
+import Fuse from 'fuse.js';
 import React, {
     useCallback,
     useEffect,
@@ -15,8 +16,37 @@ import { isLocalStorageAvailable } from '../isLocalStorageAvailable';
 
 const RECENTS_KEY = 'chayns-emoji-picker__recents';
 
+const fuse = new Fuse(
+    emojiCategories.flatMap((category) => category.emojis),
+    {
+        keys: ['1', '2'],
+        threshold: 0.32,
+        shouldSort: false,
+    }
+);
+
+const spritesheetLookupArray = emojiCategories.flatMap((category) =>
+    category.emojis.map((emojiData) => emojiData[0])
+);
+
 export function Popup() {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
+
+    const [searchTerm, setSearchTerm] = useState('smile');
+
+    const [fuseResults, setFuseResults] = useState(spritesheetLookupArray);
+
+    useEffect(() => {
+        if (searchTerm.trim() !== '') {
+            const searchResults = fuse.search(searchTerm);
+
+            const emojiResults = searchResults.map((result) => result.item[0]);
+
+            setFuseResults(emojiResults);
+        } else {
+            setFuseResults(spritesheetLookupArray);
+        }
+    }, [searchTerm]);
 
     const [recents, setRecents] = useState<EmojiData[]>(() => {
         if (isLocalStorageAvailable()) {
@@ -31,6 +61,60 @@ export function Popup() {
         }
         return [] as EmojiData[];
     });
+
+    const [groups, rows] = useMemo(() => {
+        const groups: Array<{ rowCount: number; name: string }> = [];
+        const rows: Array<EmojiData[]> = [];
+
+        const recentsRows: Array<EmojiData[]> = [];
+
+        for (const recentsEntry of recents) {
+            const [emoji] = recentsEntry;
+
+            if (fuseResults.includes(emoji)) {
+                const lastCategoryRow = recentsRows[recentsRows.length - 1];
+
+                if (lastCategoryRow && lastCategoryRow.length < 8) {
+                    lastCategoryRow.push(recentsEntry);
+                } else {
+                    recentsRows.push([recentsEntry]);
+                }
+            }
+        }
+
+        groups.push({
+            name: 'Häufig verwendet',
+            rowCount: recentsRows.length,
+        });
+        rows.push(...recentsRows);
+
+        for (const category of emojiCategories) {
+            const categoryRows: Array<EmojiData[]> = [];
+
+            for (const emojiData of category.emojis) {
+                const [emoji] = emojiData;
+
+                if (fuseResults.includes(emoji)) {
+                    const lastCategoryRow =
+                        categoryRows[categoryRows.length - 1];
+
+                    if (lastCategoryRow && lastCategoryRow.length < 8) {
+                        lastCategoryRow.push(emojiData);
+                    } else {
+                        categoryRows.push([emojiData]);
+                    }
+                }
+            }
+
+            groups.push({
+                name: category.category,
+                rowCount: categoryRows.length,
+            });
+            rows.push(...categoryRows);
+        }
+
+        return [groups, rows] as const;
+    }, [fuseResults, recents]);
 
     useEffect(() => {
         if (isLocalStorageAvailable()) {
@@ -50,81 +134,18 @@ export function Popup() {
 
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
 
-    const [elements, groupCounts, categoryNames, emojiArray] = useMemo(() => {
-        const emojiRows = [] as Array<EmojiData[]>;
-        const groupCounts = [] as number[];
-
-        for (const { emojis } of emojiCategories) {
-            emojiRows.push([]);
-
-            for (const emoji of emojis) {
-                const lastGroup = emojiRows[emojiRows.length - 1];
-
-                if (lastGroup.length < 8) {
-                    lastGroup.push(emoji);
-                } else {
-                    emojiRows.push([emoji]);
-                }
-            }
-
-            groupCounts.push(Math.ceil(emojis.length / 8));
-        }
-
-        const categoryNames = emojiCategories.map(
-            (category) => category.category
-        );
-
-        const emojiArray = emojiRows.flat().map(([emoji]) => emoji);
-
-        return [emojiRows, groupCounts, categoryNames, emojiArray];
-    }, []);
-
-    const [
-        withRecentsElements,
-        withRecentsGroupCounts,
-        withRecentsCategoryNames,
-    ] = useMemo(() => {
-        const emojiRows = [] as Array<EmojiData[]>;
-
-        emojiRows.push([]);
-
-        for (const emoji of recents) {
-            const lastGroup = emojiRows[emojiRows.length - 1];
-
-            if (lastGroup.length < 8) {
-                lastGroup.push(emoji);
-            } else {
-                emojiRows.push([emoji]);
-            }
-        }
-
-        const withRecentsGroupCounts = [emojiRows.length, ...groupCounts];
-
-        const withRecentsCategoryNames = ['Häufig verwendet', ...categoryNames];
-
-        const withRecentsEmojiRows = [...emojiRows, ...elements];
-
-        return [
-            withRecentsEmojiRows,
-            withRecentsGroupCounts,
-            withRecentsCategoryNames,
-        ];
-    }, [categoryNames, elements, groupCounts, recents]);
-
     const renderGroup = useCallback(
         (index: number) => (
-            <EmojiCategoryHeader>
-                {withRecentsCategoryNames[index]}
-            </EmojiCategoryHeader>
+            <EmojiCategoryHeader>{groups[index]?.name}</EmojiCategoryHeader>
         ),
-        [withRecentsCategoryNames]
+        [groups]
     );
 
     const renderItem = useCallback(
         (rowIndex) => {
-            const row = withRecentsElements[rowIndex];
+            const row = rows[rowIndex];
 
-            if (!row.length) {
+            if (!row || !row.length) {
                 return (
                     <EmptyCategoryContainer>
                         Hier werden Deine meist benutzten Emojis angezeigt
@@ -141,7 +162,7 @@ export function Popup() {
                         return (
                             <EmojiButton
                                 data={emojiData}
-                                index={emojiArray.indexOf(e)}
+                                index={spritesheetLookupArray.indexOf(e)}
                                 onSelect={() => {
                                     markRecent(emojiData);
                                 }}
@@ -151,18 +172,16 @@ export function Popup() {
                 </EmojiRow>
             );
         },
-        [emojiArray, markRecent, withRecentsElements]
+        [markRecent, rows]
     );
 
     const handleRangeChange = useCallback(
-        ({ startIndex, endIndex }) => {
-            console.log({ startIndex, endIndex });
-
+        ({ startIndex }) => {
             let activeGroupIndex = 0;
             let emojiIndex = 0;
 
-            for (let i = 0; i < withRecentsGroupCounts.length; i++) {
-                const groupCount = withRecentsGroupCounts[i];
+            for (let i = 0; i < groups.length; i++) {
+                const groupCount = groups[i].rowCount;
 
                 if (activeGroupIndex + groupCount > startIndex) {
                     emojiIndex = i;
@@ -173,7 +192,7 @@ export function Popup() {
 
             setActiveCategoryIndex(emojiIndex);
         },
-        [withRecentsGroupCounts]
+        [groups]
     );
 
     return (
@@ -183,12 +202,14 @@ export function Popup() {
                     iconLeft="far fa-search"
                     design={Input.BORDER_DESIGN}
                     placeholder="Finden"
+                    value={searchTerm}
+                    onChange={setSearchTerm}
                 />
             </SearchBarContainer>
             <EmojiListContainer>
                 <GroupedVirtuoso
                     ref={listHandle}
-                    groupCounts={withRecentsGroupCounts}
+                    groupCounts={groups.map((group) => group.rowCount)}
                     groupContent={renderGroup}
                     itemContent={renderItem}
                     rangeChanged={handleRangeChange}
@@ -199,10 +220,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 0;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -225,10 +246,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 1;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -251,10 +272,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 2;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -277,10 +298,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 3;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -303,10 +324,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 4;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -329,10 +350,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 5;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -355,10 +376,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 6;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -381,10 +402,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 7;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -407,10 +428,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 8;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
@@ -433,10 +454,10 @@ export function Popup() {
                     onClick={() => {
                         const index = 9;
 
-                        const listIndex = withRecentsGroupCounts
+                        const listIndex = groups
                             .slice(0, index)
                             .reduce(
-                                (count, groupCount) => count + groupCount,
+                                (count, { rowCount }) => count + rowCount,
                                 0
                             );
 
