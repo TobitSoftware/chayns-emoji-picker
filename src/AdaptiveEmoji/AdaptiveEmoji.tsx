@@ -1,9 +1,11 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { ButtonHTMLAttributes, CSSProperties } from 'react';
+import { parse } from 'twemoji-parser';
 
-interface Props {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     emoji: string;
-    index: number;
+    spritesheetIndex?: number;
 }
 
 const isWindows =
@@ -13,38 +15,74 @@ const SPRITESHEET_COLUMNS = 42;
 const SPRITESHEET_ROWS = 43;
 const EMOJI_SIZE = 28;
 
-export function AdaptiveEmoji({ emoji, index }: Props): ReactElement {
-    const shouldUseTwemoji = isWindows;
+export const AdaptiveEmoji = React.forwardRef<HTMLButtonElement, Props>(
+    ({ emoji, spritesheetIndex, ...props }, ref) => {
+        const shouldUseTwemoji = isWindows;
 
-    let style: CSSProperties | undefined;
+        let style: CSSProperties | undefined;
+        const useSpritesheet = spritesheetIndex != null;
 
-    if (shouldUseTwemoji) {
-        const column = index % SPRITESHEET_COLUMNS;
-        const row = Math.floor(index / SPRITESHEET_COLUMNS);
+        if (shouldUseTwemoji) {
+            if (spritesheetIndex != null) {
+                const column = spritesheetIndex % SPRITESHEET_COLUMNS;
+                const row = Math.floor(spritesheetIndex / SPRITESHEET_COLUMNS);
 
-        const backgroundXPosition = column * EMOJI_SIZE;
-        const backgroundYPosition = row * EMOJI_SIZE;
+                const backgroundXPosition = column * EMOJI_SIZE;
+                const backgroundYPosition = row * EMOJI_SIZE;
 
-        style = {
-            backgroundPosition: `-${backgroundXPosition}px -${backgroundYPosition}px`,
-        };
+                style = {
+                    backgroundPosition: `-${backgroundXPosition}px -${backgroundYPosition}px`,
+                };
+            } else {
+                const [firstParsingResult] = parse(emoji);
+
+                style = {
+                    backgroundImage: `url(${firstParsingResult.url})`,
+                };
+            }
+        }
+
+        return (
+            <EmojiContainer ref={ref} {...props}>
+                <EmojiBackgroundImageContainer
+                    style={style}
+                    useSpritesheet={useSpritesheet}
+                >
+                    <NativeEmojiSpan visuallyHidden={shouldUseTwemoji}>
+                        {emoji}
+                    </NativeEmojiSpan>
+                </EmojiBackgroundImageContainer>
+            </EmojiContainer>
+        );
     }
+);
 
-    return (
-        <EmojiContainer className="emoji" style={style}>
-            <NativeEmojiSpan visuallyHidden={shouldUseTwemoji}>
-                {emoji}
-            </NativeEmojiSpan>
-        </EmojiContainer>
-    );
-}
+const EmojiContainer = styled.button`
+    height: 100%;
+    width: 100%;
+    background-color: unset;
+    margin: 0;
+    padding: 4px;
+    border-radius: 3px;
 
-const EmojiContainer = styled.div`
+    &:focus {
+        background-color: var(--chayns-color--002);
+    }
+`;
+
+const EmojiBackgroundImageContainer = styled.span<{ useSpritesheet: boolean }>`
+    display: block;
     height: 100%;
 
-    background-image: url(https://awesome-swartz-cfc28f.netlify.app/twemoji-spritesheet.png);
-    background-repeat: no-repeat;
-    background-size: ${SPRITESHEET_COLUMNS * 100}% ${SPRITESHEET_ROWS * 100}%;
+    ${(props) =>
+        props.useSpritesheet
+            ? css`
+                  background-image: url(https://awesome-swartz-cfc28f.netlify.app/twemoji-spritesheet.png);
+                  background-repeat: no-repeat;
+                  background-size: ${SPRITESHEET_COLUMNS * 100}%
+                      ${SPRITESHEET_ROWS * 100}%;
+              `
+            : ''}
 `;
 
 const NativeEmojiSpan = styled.span<{ visuallyHidden: boolean }>`
