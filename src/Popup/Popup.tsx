@@ -9,7 +9,7 @@ import React, {
     useState,
 } from 'react';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
-import { AdaptiveEmoji } from '../AdaptiveEmoji/AdaptiveEmoji';
+import { EmojiButton } from '../EmojiButton';
 import { emojiCategories, EmojiData } from '../german-emoji-data';
 import { isLocalStorageAvailable } from '../isLocalStorageAvailable';
 
@@ -139,17 +139,13 @@ export function Popup() {
                         const [e] = emojiData;
 
                         return (
-                            <Emoji
-                                key={e}
-                                onClick={() => {
+                            <EmojiButton
+                                data={emojiData}
+                                index={emojiArray.indexOf(e)}
+                                onSelect={() => {
                                     markRecent(emojiData);
                                 }}
-                            >
-                                <AdaptiveEmoji
-                                    emoji={e}
-                                    index={emojiArray.indexOf(e)}
-                                />
-                            </Emoji>
+                            />
                         );
                     })}
                 </EmojiRow>
@@ -220,7 +216,7 @@ export function Popup() {
                         icon="fas fa-history"
                         className={
                             activeCategoryIndex === 0
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -246,7 +242,7 @@ export function Popup() {
                         icon="fas fa-grin-alt"
                         className={
                             activeCategoryIndex === 1
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -272,7 +268,7 @@ export function Popup() {
                         icon="fas fa-child"
                         className={
                             activeCategoryIndex === 2
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -298,7 +294,7 @@ export function Popup() {
                         icon="fas fa-leaf"
                         className={
                             activeCategoryIndex === 3
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -324,7 +320,7 @@ export function Popup() {
                         icon="fas fa-mug-tea"
                         className={
                             activeCategoryIndex === 4
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -350,7 +346,7 @@ export function Popup() {
                         icon="fas fa-plane"
                         className={
                             activeCategoryIndex === 5
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -376,7 +372,7 @@ export function Popup() {
                         icon="fas fa-futbol"
                         className={
                             activeCategoryIndex === 6
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -402,7 +398,7 @@ export function Popup() {
                         icon="fas fa-lightbulb"
                         className={
                             activeCategoryIndex === 7
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -428,7 +424,7 @@ export function Popup() {
                         icon="fas fa-hashtag"
                         className={
                             activeCategoryIndex === 8
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
@@ -454,7 +450,7 @@ export function Popup() {
                         icon="fas fa-flag"
                         className={
                             activeCategoryIndex === 9
-                                ? 'chayns__color--006i'
+                                ? 'chayns__color--007i'
                                 : undefined
                         }
                     />
