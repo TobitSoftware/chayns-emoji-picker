@@ -10,9 +10,9 @@ import React, {
     useState,
 } from 'react';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
+import { emojiCategories, EmojiData } from '../../german-emoji-data';
+import { isLocalStorageAvailable } from '../../utils/isLocalStorageAvailable';
 import { EmojiButton } from '../EmojiButton';
-import { emojiCategories, EmojiData } from '../german-emoji-data';
-import { isLocalStorageAvailable } from '../isLocalStorageAvailable';
 
 const RECENTS_KEY = 'chayns-emoji-picker__recents';
 
@@ -185,13 +185,17 @@ export function Popup() {
             let emojiIndex = 0;
 
             for (let i = 0; i < groups.length; i++) {
-                const groupCount = groups[i].rowCount;
+                const row = groups[i];
 
-                if (activeGroupIndex + groupCount > startIndex) {
-                    emojiIndex = i;
-                    break;
+                if (row) {
+                    const groupCount = row.rowCount;
+
+                    if (activeGroupIndex + groupCount > startIndex) {
+                        emojiIndex = i;
+                        break;
+                    }
+                    activeGroupIndex += groupCount;
                 }
-                activeGroupIndex += groupCount;
             }
 
             setActiveCategoryIndex(emojiIndex);
@@ -560,14 +564,6 @@ const CategoryButton = styled.button`
 const EmojiListContainer = styled.div`
     flex: 1;
     overflow-y: auto;
-`;
-
-const Emoji = styled.li`
-    width: 36px;
-    height: 36px;
-    padding: 4px;
-    margin: 0;
-    list-style-type: none;
 `;
 
 const EmptyCategoryContainer = styled.p`

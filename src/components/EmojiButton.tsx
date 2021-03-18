@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import { useFocusWithin } from '@react-aria/interactions';
 import React, { KeyboardEvent, ReactElement, useRef, useState } from 'react';
 import FocusLock from 'react-focus-lock';
-import { AdaptiveEmoji } from './AdaptiveEmoji/AdaptiveEmoji';
-import { EmojiData } from './german-emoji-data';
-import { modifySkinTone } from './modifySkinTone';
+import { EmojiData } from '../german-emoji-data';
+import { modifySkinTone } from '../utils/modifySkinTone';
+import { AdaptiveEmoji } from './AdaptiveEmoji';
 
 interface Props {
     data: EmojiData;
