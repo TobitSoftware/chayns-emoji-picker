@@ -44,6 +44,7 @@ const categoryImages = [
 
 export function Popup() {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
+    const windowRef = useRef<HTMLDivElement | null>(null);
 
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -197,6 +198,7 @@ export function Popup() {
                                 }}
                                 rowIndex={rowIndex}
                                 columnIndex={columnIndex}
+                                windowRef={windowRef}
                             />
                         );
                     })}
@@ -231,7 +233,7 @@ export function Popup() {
     );
 
     return (
-        <PopupContainer>
+        <PopupContainer ref={windowRef}>
             <SearchBarContainer>
                 <Input
                     iconLeft="far fa-search"

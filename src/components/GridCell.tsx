@@ -1,5 +1,11 @@
 import styled from '@emotion/styled';
-import React, { KeyboardEvent, ReactElement, useRef, useState } from 'react';
+import React, {
+    KeyboardEvent,
+    ReactElement,
+    RefObject,
+    useRef,
+    useState,
+} from 'react';
 import { EmojiData } from '../german-emoji-data';
 import { AdaptiveEmoji } from './AdaptiveEmoji';
 import SkinTonePicker from './SkinTonePicker';
@@ -12,6 +18,7 @@ interface Props {
     onSelect: () => void;
     rowIndex: number;
     columnIndex: number;
+    windowRef: RefObject<HTMLElement>;
 }
 
 export function GridCell({
@@ -20,6 +27,7 @@ export function GridCell({
     onSelect,
     rowIndex,
     columnIndex,
+    windowRef,
 }: Props): ReactElement {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -105,10 +113,11 @@ export function GridCell({
             {showSkinTonePicker && (
                 <SkinTonePicker
                     emoji={emoji}
-                    finalFocusRef={buttonRef}
+                    parentRef={buttonRef}
                     onClose={() => setShowSkinTonePicker(false)}
                     onSelect={() => setShowSkinTonePicker(false)}
                     parentId={emojiButtonId}
+                    windowRef={windowRef}
                 />
             )}
         </Emoji>

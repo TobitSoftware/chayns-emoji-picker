@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 import { useFocusWithin } from '@react-aria/interactions';
 import React, {
+    CSSProperties,
     KeyboardEvent,
     ReactElement,
     RefObject,
+    useLayoutEffect,
     useRef,
     useState,
 } from 'react';
@@ -16,16 +18,18 @@ interface Props {
     emoji: string;
     onClose: () => void;
     onSelect: (skintone: SkinTone) => void;
-    finalFocusRef?: RefObject<HTMLElement | null>;
+    parentRef: RefObject<HTMLElement | null>;
     parentId: string;
+    windowRef: RefObject<HTMLElement>;
 }
 
 export default function SkinTonePicker({
     emoji,
     onClose,
     onSelect,
-    finalFocusRef,
+    parentRef,
     parentId,
+    windowRef,
 }: Props): ReactElement {
     const popupRef = useRef<HTMLUListElement | null>(null);
     const [refs] = useState(() =>
@@ -82,12 +86,33 @@ export default function SkinTonePicker({
         }
     }
 
+    const [positionStyles, setPositionStyles] = useState<CSSProperties>();
+
+    useLayoutEffect(() => {
+        const windowRect = windowRef.current?.getBoundingClientRect();
+        const parentRect = parentRef.current?.getBoundingClientRect();
+
+        if (windowRect && parentRect) {
+            const left = parentRect.left - windowRect.left;
+            const right = parentRect.right - windowRect.right;
+
+            const isInFirstHalf =
+                parentRect.width / 2 + left < windowRect.width / 2;
+
+            if (isInFirstHalf) {
+                setPositionStyles({ left: 8 - left / 1.5 });
+            } else {
+                setPositionStyles({ right: 8 + right / 1.5 });
+            }
+        }
+    }, [parentRef, windowRef]);
+
     return (
         <FocusLock
             onDeactivation={() => {
                 setTimeout(() => {
-                    if (finalFocusRef) {
-                        finalFocusRef.current?.focus();
+                    if (parentRef) {
+                        parentRef.current?.focus();
                     }
                 }, 0);
             }}
@@ -98,6 +123,7 @@ export default function SkinTonePicker({
                 role="menu"
                 aria-orientation="horizontal"
                 aria-labelledby={parentId}
+                style={positionStyles}
                 {...focusWithinProps}
             >
                 <Emoji>
@@ -143,8 +169,8 @@ export default function SkinTonePicker({
                         onClick={() => onSelect('darkBrown')}
                     />
                 </Emoji>
-                <Arrow />
             </SkinTonePopup>
+            <Arrow />
         </FocusLock>
     );
 }
@@ -170,7 +196,6 @@ const SkinTonePopup = styled.ul`
     box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1),
         0px 1px 2px rgba(0, 0, 0, 0.12);
     bottom: 100%;
-    right: -8px;
     z-index: 10;
     padding: 4px;
     margin: 0 0 4px;
@@ -241,6 +266,8 @@ const ArrowSvg = styled.svg`
     height: 18px;
 
     position: absolute;
-    top: calc(100% - 2px);
-    right: 14px;
+    z-index: 11;
+    bottom: calc(100% - 12px);
+    right: 50%;
+    transform: translateX(50%);
 `;
