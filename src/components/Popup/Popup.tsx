@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import Icon from 'chayns-components/lib/react-chayns-icon/component/Icon.js';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import Fuse from 'fuse.js';
 import React, {
@@ -12,6 +11,7 @@ import React, {
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { emojiCategories, EmojiData } from '../../german-emoji-data';
 import { isLocalStorageAvailable } from '../../utils/isLocalStorageAvailable';
+import CategoryRow from '../CategoryRow';
 import { EmojiButton } from '../EmojiButton';
 
 const RECENTS_KEY = 'chayns-emoji-picker__recents';
@@ -28,6 +28,19 @@ const fuse = new Fuse(
 const spritesheetLookupArray = emojiCategories.flatMap((category) =>
     category.emojis.map((emojiData) => emojiData[0])
 );
+
+const categoryImages = [
+    'fa-history',
+    'fa-grin-alt',
+    'fa-child',
+    'fa-leaf',
+    'fa-mug-tea',
+    'fa-plane',
+    'fa-futbol',
+    'fa-lightbulb',
+    'fa-hashtag',
+    'fa-flag',
+] as const;
 
 export function Popup() {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
@@ -63,7 +76,11 @@ export function Popup() {
     });
 
     const [groups, rows] = useMemo(() => {
-        const groups: Array<{ rowCount: number; name: string }> = [];
+        const groups: Array<{
+            rowCount: number;
+            name: string;
+            icon?: string;
+        }> = [];
         const rows: Array<EmojiData[]> = [];
 
         const recentsRows: Array<EmojiData[]> = [];
@@ -86,11 +103,18 @@ export function Popup() {
             groups.push({
                 name: 'Häufig verwendet',
                 rowCount: recentsRows.length,
+                icon: categoryImages[0],
             });
             rows.push(...recentsRows);
         }
 
-        for (const category of emojiCategories) {
+        for (let i = 0; i < emojiCategories.length; i++) {
+            const category = emojiCategories[i];
+
+            if (!category) {
+                throw Error('Empty category found in emojiCategories');
+            }
+
             const categoryRows: Array<EmojiData[]> = [];
 
             for (const emojiData of category.emojis) {
@@ -112,6 +136,7 @@ export function Popup() {
                 groups.push({
                     name: category.category,
                     rowCount: categoryRows.length,
+                    icon: categoryImages[i + 1],
                 });
                 rows.push(...categoryRows);
             }
@@ -221,271 +246,23 @@ export function Popup() {
                     groupContent={renderGroup}
                     itemContent={renderItem}
                     rangeChanged={handleRangeChange}
-                    footer={EmojiListFooter}
+                    components={{ Footer: EmojiListFooter }}
                 />
             </EmojiListContainer>
-            <EmojiCategories>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 0;
+            <CategoryRow
+                groups={groups}
+                activeCategoryIndex={activeCategoryIndex}
+                onSelect={(index) => {
+                    const listIndex = groups
+                        .slice(0, index)
+                        .reduce((count, { rowCount }) => count + rowCount, 0);
 
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-history"
-                        className={
-                            activeCategoryIndex === 0
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 1;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-grin-alt"
-                        className={
-                            activeCategoryIndex === 1
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 2;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-child"
-                        className={
-                            activeCategoryIndex === 2
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 3;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-leaf"
-                        className={
-                            activeCategoryIndex === 3
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 4;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-mug-tea"
-                        className={
-                            activeCategoryIndex === 4
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 5;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-plane"
-                        className={
-                            activeCategoryIndex === 5
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 6;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-futbol"
-                        className={
-                            activeCategoryIndex === 6
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 7;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-lightbulb"
-                        className={
-                            activeCategoryIndex === 7
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 8;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-hashtag"
-                        className={
-                            activeCategoryIndex === 8
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-                <CategoryButton
-                    onClick={() => {
-                        const index = 9;
-
-                        const listIndex = groups
-                            .slice(0, index)
-                            .reduce(
-                                (count, { rowCount }) => count + rowCount,
-                                0
-                            );
-
-                        listHandle.current?.scrollToIndex({
-                            index: listIndex,
-                            behavior: 'smooth',
-                        });
-                    }}
-                >
-                    <Icon
-                        icon="fas fa-flag"
-                        className={
-                            activeCategoryIndex === 9
-                                ? 'chayns__color--007i'
-                                : undefined
-                        }
-                    />
-                </CategoryButton>
-            </EmojiCategories>
+                    listHandle.current?.scrollToIndex({
+                        index: listIndex,
+                        behavior: 'smooth',
+                    });
+                }}
+            />
         </PopupContainer>
     );
 }
@@ -499,6 +276,7 @@ const PopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    user-select: none;
 
     * {
         box-sizing: border-box;
@@ -528,19 +306,6 @@ const SearchBarContainer = styled.div`
     padding: 8px 8px 0;
 `;
 
-const EmojiCategories = styled.div`
-    box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 4px 8px;
-    border-top: 1px solid var(--chayns-color--002);
-
-    i.react-chayns-icon {
-        color: var(--chayns-color--003);
-    }
-`;
-
 const EmojiCategoryHeader = styled.div`
     color: var(--chayns-color--006);
     background: linear-gradient(
@@ -549,17 +314,6 @@ const EmojiCategoryHeader = styled.div`
     );
     backdrop-filter: blur(8px);
     padding: 12px 10px 4px;
-`;
-
-const CategoryButton = styled.button`
-    padding: 0;
-    margin: 0;
-    background: none;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 `;
 
 const EmojiListContainer = styled.div`

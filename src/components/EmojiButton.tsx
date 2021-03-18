@@ -4,6 +4,7 @@ import React, { KeyboardEvent, ReactElement, useRef, useState } from 'react';
 import FocusLock from 'react-focus-lock';
 import { EmojiData } from '../german-emoji-data';
 import { modifySkinTone } from '../utils/modifySkinTone';
+import { modulo } from '../utils/modulo';
 import { AdaptiveEmoji } from './AdaptiveEmoji';
 
 interface Props {
@@ -51,7 +52,7 @@ export function EmojiButton({ data, index, onSelect }: Props): ReactElement {
 
         const newIndex = modulo(currentFocusIndex - 1, refs.length);
 
-        refs[newIndex].current?.focus();
+        refs[newIndex]?.current?.focus();
     }
 
     function focusNext() {
@@ -61,7 +62,7 @@ export function EmojiButton({ data, index, onSelect }: Props): ReactElement {
 
         const newIndex = modulo(currentFocusIndex + 1, refs.length);
 
-        refs[newIndex].current?.focus();
+        refs[newIndex]?.current?.focus();
     }
 
     function handleKeyDownPopup(event: KeyboardEvent<HTMLUListElement>) {
@@ -259,7 +260,3 @@ const SkinTonePopup = styled.ul`
     border-radius: 3px;
     display: flex;
 `;
-
-function modulo(n: number, m: number) {
-    return ((n % m) + m) % m;
-}
