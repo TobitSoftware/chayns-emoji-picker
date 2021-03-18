@@ -20,7 +20,7 @@ const fuse = new Fuse(
     emojiCategories.flatMap((category) => category.emojis),
     {
         keys: ['1', '2'],
-        threshold: 0.32,
+        threshold: 0.24,
         shouldSort: false,
     }
 );
