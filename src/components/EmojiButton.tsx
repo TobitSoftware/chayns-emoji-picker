@@ -184,10 +184,10 @@ export function EmojiButton({ data, index, onSelect }: Props): ReactElement {
                                     width="28"
                                     height="17.757"
                                     filterUnits="userSpaceOnUse"
-                                    color-interpolation-filters="sRGB"
+                                    colorInterpolationFilters="sRGB"
                                 >
                                     <feFlood
-                                        flood-opacity="0"
+                                        floodOpacity="0"
                                         result="BackgroundImageFix"
                                     />
                                     <feColorMatrix
