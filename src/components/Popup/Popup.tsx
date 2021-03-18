@@ -12,7 +12,7 @@ import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { emojiCategories, EmojiData } from '../../german-emoji-data';
 import { isLocalStorageAvailable } from '../../utils/isLocalStorageAvailable';
 import CategoryRow from '../CategoryRow';
-import { EmojiButton } from '../EmojiButton';
+import { GridCell } from '../GridCell';
 
 const RECENTS_KEY = 'chayns-emoji-picker__recents';
 
@@ -184,17 +184,19 @@ export function Popup() {
             }
 
             return (
-                <EmojiRow>
-                    {row?.map((emojiData) => {
+                <EmojiRow role="row" aria-rowindex={rowIndex}>
+                    {row?.map((emojiData, columnIndex) => {
                         const [e] = emojiData;
 
                         return (
-                            <EmojiButton
-                                data={emojiData}
+                            <GridCell
+                                emojiData={emojiData}
                                 index={spritesheetLookupArray.indexOf(e)}
                                 onSelect={() => {
                                     markRecent(emojiData);
                                 }}
+                                rowIndex={rowIndex}
+                                columnIndex={columnIndex}
                             />
                         );
                     })}
@@ -261,6 +263,7 @@ export function Popup() {
                     itemContent={renderItem}
                     rangeChanged={handleRangeChange}
                     components={{ Footer: EmojiListFooter }}
+                    overscan={50}
                 />
             </EmojiListContainer>
         </PopupContainer>

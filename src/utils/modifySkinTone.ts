@@ -1,4 +1,4 @@
-type SkinTone =
+export type SkinTone =
     | 'none'
     | 'white'
     | 'creamWhite'
