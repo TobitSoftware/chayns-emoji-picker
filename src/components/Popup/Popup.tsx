@@ -221,6 +221,7 @@ export function Popup() {
                     groupContent={renderGroup}
                     itemContent={renderItem}
                     rangeChanged={handleRangeChange}
+                    footer={EmojiListFooter}
                 />
             </EmojiListContainer>
             <EmojiCategories>
@@ -576,4 +577,8 @@ const EmptyCategoryContainer = styled.p`
 const EmojiRow = styled.div`
     display: flex;
     padding: 0 8px;
+`;
+
+const EmojiListFooter = styled.div`
+    height: 8px;
 `;
