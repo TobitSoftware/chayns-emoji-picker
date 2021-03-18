@@ -32,7 +32,7 @@ const spritesheetLookupArray = emojiCategories.flatMap((category) =>
 export function Popup() {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
 
-    const [searchTerm, setSearchTerm] = useState('smile');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [fuseResults, setFuseResults] = useState(spritesheetLookupArray);
 
@@ -82,11 +82,13 @@ export function Popup() {
             }
         }
 
-        groups.push({
-            name: 'Häufig verwendet',
-            rowCount: recentsRows.length,
-        });
-        rows.push(...recentsRows);
+        if (recentsRows.length > 0) {
+            groups.push({
+                name: 'Häufig verwendet',
+                rowCount: recentsRows.length,
+            });
+            rows.push(...recentsRows);
+        }
 
         for (const category of emojiCategories) {
             const categoryRows: Array<EmojiData[]> = [];
@@ -106,11 +108,13 @@ export function Popup() {
                 }
             }
 
-            groups.push({
-                name: category.category,
-                rowCount: categoryRows.length,
-            });
-            rows.push(...categoryRows);
+            if (categoryRows.length > 0) {
+                groups.push({
+                    name: category.category,
+                    rowCount: categoryRows.length,
+                });
+                rows.push(...categoryRows);
+            }
         }
 
         return [groups, rows] as const;
