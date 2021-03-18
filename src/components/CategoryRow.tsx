@@ -108,6 +108,8 @@ export default function CategoryRow({
 }
 
 const RowContainer = styled.div`
+    order: 99;
+
     display: flex;
     justify-content: space-evenly;
     align-items: center;

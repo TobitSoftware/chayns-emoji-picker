@@ -239,16 +239,6 @@ export function Popup() {
                     onChange={setSearchTerm}
                 />
             </SearchBarContainer>
-            <EmojiListContainer>
-                <GroupedVirtuoso
-                    ref={listHandle}
-                    groupCounts={groups.map((group) => group.rowCount)}
-                    groupContent={renderGroup}
-                    itemContent={renderItem}
-                    rangeChanged={handleRangeChange}
-                    components={{ Footer: EmojiListFooter }}
-                />
-            </EmojiListContainer>
             <CategoryRow
                 groups={groups}
                 activeCategoryIndex={activeCategoryIndex}
@@ -263,6 +253,16 @@ export function Popup() {
                     });
                 }}
             />
+            <EmojiListContainer>
+                <GroupedVirtuoso
+                    ref={listHandle}
+                    groupCounts={groups.map((group) => group.rowCount)}
+                    groupContent={renderGroup}
+                    itemContent={renderItem}
+                    rangeChanged={handleRangeChange}
+                    components={{ Footer: EmojiListFooter }}
+                />
+            </EmojiListContainer>
         </PopupContainer>
     );
 }
