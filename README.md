@@ -46,6 +46,7 @@ Now, you can import the `<EmojiPicker>` component into your components:
 
 ```tsx
 import React, { ReactElement } from 'react';
+import { EmojiPicker } from 'chayns-emoji-picker';
 
 export function MyComponent() {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
