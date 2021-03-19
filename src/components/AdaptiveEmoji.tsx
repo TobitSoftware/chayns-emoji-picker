@@ -36,9 +36,11 @@ export const AdaptiveEmoji = React.forwardRef<HTMLButtonElement, Props>(
             } else {
                 const [firstParsingResult] = parse(emoji);
 
-                style = {
-                    backgroundImage: `url(${firstParsingResult.url})`,
-                };
+                if (firstParsingResult) {
+                    style = {
+                        backgroundImage: `url(${firstParsingResult.url})`,
+                    };
+                }
             }
         }
 
