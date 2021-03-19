@@ -23,8 +23,8 @@
 
 ---
 
-`chayns-emoji-picker` is a full-featured and accessible emoji-picker for chayns®
-applications. It is built and meant to be used with React.
+`chayns-emoji-picker` is a fully-featured and accessible emoji-picker for
+chayns® applications. It is built and meant to be used with React.
 
 <p align="center">
     <img alt="The component in action" src="./assets/screenshot.png" /> 
@@ -80,8 +80,9 @@ For a full reference and documentation of all props, visit the
 
 ## ❯ Documentation
 
-Visit tobitsoftware.github.io/chayns-emoji-picker/ to read the full
-documentation.
+Visit
+[tobitsoftware.github.io/chayns-emoji-picker/](https://tobitsoftware.github.io/chayns-emoji-picker/)
+to read the full documentation.
 
 <br />
 
