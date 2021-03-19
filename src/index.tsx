@@ -1,1 +1,1 @@
-export { Popup } from './components/Popup/Popup';
+export { EmojiPicker } from './components/EmojiPicker/EmojiPicker';

@@ -48,7 +48,7 @@ interface Props {
     /**
      * Wether the popup-window to pick an emoji should be open.
      */
-    open: boolean;
+    show: boolean;
 
     /**
      * Called when the popup requests to be closed, e.g. when the user clicks
@@ -56,7 +56,7 @@ interface Props {
      *
      * This should update the state that is passed into the `open`-prop.
      */
-    onClose: () => void;
+    onHide: () => void;
 
     /**
      * Called when the user picks an emoji. Receives the emoji as a string as
@@ -103,9 +103,9 @@ interface Props {
  *
  * @summary Description
  */
-export function Popup({
-    open,
-    onClose,
+export function EmojiPicker({
+    show,
+    onHide,
     onPick,
     horizontal = 'left',
     vertical = 'top',
