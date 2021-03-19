@@ -2,12 +2,14 @@ import styled from '@emotion/styled';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import Fuse from 'fuse.js';
 import React, {
+    RefObject,
     useCallback,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
+import FocusLock from 'react-focus-lock';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { emojiCategories, EmojiData } from '../../german-emoji-data';
 import { isLocalStorageAvailable } from '../../utils/isLocalStorageAvailable';
@@ -42,7 +44,73 @@ const categoryImages = [
     'fa-flag',
 ] as const;
 
-export function Popup() {
+interface Props {
+    /**
+     * Wether the popup-window to pick an emoji should be open.
+     */
+    open: boolean;
+
+    /**
+     * Called when the popup requests to be closed, e.g. when the user clicks
+     * away or presses the Escape-key.
+     *
+     * This should update the state that is passed into the `open`-prop.
+     */
+    onClose: () => void;
+
+    /**
+     * Called when the user picks an emoji. Receives the emoji as a string as
+     * it's first argument.
+     */
+    onPick?: (emoji: string) => void;
+
+    /**
+     * Controls the relative horizontal position of the popup to it's anchor
+     * node. Setting it to `left` will make the popup open towards the left side
+     * of the anchor node, `right` to the right side.
+     */
+    horizontal?: 'left' | 'right';
+
+    /**
+     * Controls the relative vertical position of the popup to it's anchor
+     * node. Setting it to `top` will make the popup open above the anchor node,
+     * `bottom` will position the popup below the anchor node.
+     */
+    vertical?: 'top' | 'bottom';
+
+    /**
+     * An element that acts as the anchor for the popup. The popup's position
+     * will always be relative to an anchor element, e.g. an icon button in an
+     * input field that opens an emoji-picker on click.
+     *
+     * By default the popup is positioned absolutely, therefore it will be
+     * relative to the nearest parent that is positioned `relative` or
+     * `absolute`.
+     *
+     * If an anchor node is provided, the popup will be inserted as a direct
+     * child of the `document.body` element. The position of the anchor element
+     * will be measured and the popup will be positioned relatively through
+     * transforms.
+     *
+     * This can be useful if a parent element specifies `overflow: hidden;`,
+     * since the popup would not be fully visible in that case.
+     */
+    anchor?: RefObject<HTMLElement> | HTMLElement;
+}
+
+/**
+ * Hihi
+ *
+ * @summary Description
+ */
+export function Popup({
+    open,
+    onClose,
+    onPick,
+    horizontal = 'left',
+    vertical = 'top',
+    anchor,
+}: Props) {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
     const windowRef = useRef<HTMLDivElement | null>(null);
 
@@ -195,6 +263,7 @@ export function Popup() {
                                 index={spritesheetLookupArray.indexOf(e)}
                                 onSelect={() => {
                                     markRecent(emojiData);
+                                    onPick(e);
                                 }}
                                 rowIndex={rowIndex}
                                 columnIndex={columnIndex}
@@ -233,42 +302,46 @@ export function Popup() {
     );
 
     return (
-        <PopupContainer ref={windowRef}>
-            <SearchBarContainer>
-                <Input
-                    iconLeft="far fa-search"
-                    design={Input.BORDER_DESIGN}
-                    placeholder="Finden"
-                    value={searchTerm}
-                    onChange={setSearchTerm}
+        <FocusLock>
+            <PopupContainer ref={windowRef}>
+                <SearchBarContainer>
+                    <Input
+                        iconLeft="far fa-search"
+                        design={Input.BORDER_DESIGN}
+                        placeholder="Finden"
+                        value={searchTerm}
+                        onChange={setSearchTerm}
+                    />
+                </SearchBarContainer>
+                <CategoryRow
+                    groups={groups}
+                    activeCategoryIndex={activeCategoryIndex}
+                    onSelect={(index) => {
+                        const listIndex = groups
+                            .slice(0, index)
+                            .reduce(
+                                (count, { rowCount }) => count + rowCount,
+                                0
+                            );
+                        listHandle.current?.scrollToIndex({
+                            index: listIndex,
+                            behavior: 'smooth',
+                        });
+                    }}
                 />
-            </SearchBarContainer>
-            <CategoryRow
-                groups={groups}
-                activeCategoryIndex={activeCategoryIndex}
-                onSelect={(index) => {
-                    const listIndex = groups
-                        .slice(0, index)
-                        .reduce((count, { rowCount }) => count + rowCount, 0);
-
-                    listHandle.current?.scrollToIndex({
-                        index: listIndex,
-                        behavior: 'smooth',
-                    });
-                }}
-            />
-            <EmojiListContainer>
-                <GroupedVirtuoso
-                    ref={listHandle}
-                    groupCounts={groups.map((group) => group.rowCount)}
-                    groupContent={renderGroup}
-                    itemContent={renderItem}
-                    rangeChanged={handleRangeChange}
-                    components={{ Footer: EmojiListFooter }}
-                    overscan={50}
-                />
-            </EmojiListContainer>
-        </PopupContainer>
+                <EmojiListContainer>
+                    <GroupedVirtuoso
+                        ref={listHandle}
+                        groupCounts={groups.map((group) => group.rowCount)}
+                        groupContent={renderGroup}
+                        itemContent={renderItem}
+                        rangeChanged={handleRangeChange}
+                        components={{ Footer: EmojiListFooter }}
+                        overscan={50}
+                    />
+                </EmojiListContainer>
+            </PopupContainer>
+        </FocusLock>
     );
 }
 
