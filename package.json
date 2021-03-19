@@ -11,16 +11,17 @@
         "src"
     ],
     "scripts": {
-        "start": "tsdx watch",
+        "analyze": "size-limit --why",
+        "build-storybook": "build-storybook",
         "build": "tsdx build",
-        "test": "tsdx test --passWithNoTests",
+        "check-types": "tsc",
+        "dev": "tsdx watch",
+        "format": "prettier . --write --ignore-path .gitignore",
         "lint": "eslint ./src",
         "prepare": "husky install && shx rm -rf .git/hooks && shx ln -s ../.husky .git/hooks",
         "size": "size-limit",
-        "analyze": "size-limit --why",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook",
-        "format": "prettier . --write --ignore-path .gitignore"
+        "test": "tsdx test --passWithNoTests"
     },
     "resolutions": {
         "**/typescript": "^4.2.3"
