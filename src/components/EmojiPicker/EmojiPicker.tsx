@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
+import { motion } from 'framer-motion';
 import Fuse from 'fuse.js';
 import React, {
+    CSSProperties,
     RefObject,
     useCallback,
     useEffect,
@@ -98,11 +100,6 @@ interface Props {
     anchor?: RefObject<HTMLElement> | HTMLElement;
 }
 
-/**
- * Hihi
- *
- * @summary Description
- */
 export function EmojiPicker({
     show,
     onHide,
@@ -301,9 +298,27 @@ export function EmojiPicker({
         [groups]
     );
 
+    const style: CSSProperties = {};
+
+    switch (horizontal) {
+        case 'left':
+            style.right = 0;
+            break;
+        case 'right':
+            style.left = 0;
+    }
+
+    switch (vertical) {
+        case 'top':
+            style.bottom = '100%';
+            break;
+        case 'bottom':
+            style.top = '100%';
+    }
+
     return (
         <FocusLock>
-            <PopupContainer ref={windowRef}>
+            <PopupContainer ref={windowRef} style={style} layout>
                 <SearchBarContainer>
                     <Input
                         iconLeft="far fa-search"
@@ -345,8 +360,9 @@ export function EmojiPicker({
     );
 }
 
-const PopupContainer = styled.div`
+const PopupContainer = styled(motion.div)`
     position: absolute;
+
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
     height: 420px;
