@@ -192,7 +192,7 @@ const EmojiDivider = styled.div`
 
 const SkinTonePopup = styled.ul`
     position: absolute;
-    background-color: white;
+    background-color: var(--chayns-color--000);
     box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1),
         0px 1px 2px rgba(0, 0, 0, 0.12);
     bottom: 100%;
@@ -207,10 +207,7 @@ function Arrow() {
     return (
         <ArrowSvg fill="none" xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#filter0_dd)">
-                <path
-                    d="M16.121 7.879L23 1H5l6.879 6.879a3 3 0 004.242 0z"
-                    fill="#fff"
-                />
+                <path d="M16.121 7.879L23 1H5l6.879 6.879a3 3 0 004.242 0z" />
             </g>
             <defs>
                 <filter
@@ -270,4 +267,8 @@ const ArrowSvg = styled.svg`
     bottom: calc(100% - 12px);
     right: 50%;
     transform: translateX(50%);
+
+    path {
+        fill: var(--chayns-color--000);
+    }
 `;
