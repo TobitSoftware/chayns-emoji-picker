@@ -441,14 +441,18 @@ const HEIGHT = 420;
 
 const PopupContainer = styled.div`
     position: fixed;
-
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
     height: ${HEIGHT}px;
     width: ${WIDTH}px;
+    overflow: hidden;
+
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+
+    background-color: var(--chayns-color--000);
+    border-radius: 3px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
     user-select: none;
 
     * {
