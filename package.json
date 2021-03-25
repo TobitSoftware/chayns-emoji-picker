@@ -29,6 +29,7 @@
     "dependencies": {
         "@emotion/react": "^11.1.5",
         "@emotion/styled": "^11.1.5",
+        "@reach/rect": "^0.13.2",
         "@react-aria/interactions": "^3.3.3",
         "framer-motion": "^4.0.0",
         "fuse.js": "^6.4.6",

@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
+import { useRect } from '@reach/rect';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
-import { motion } from 'framer-motion';
 import Fuse from 'fuse.js';
 import React, {
+    createRef,
     CSSProperties,
+    MutableRefObject,
     RefObject,
     useCallback,
     useEffect,
@@ -11,6 +13,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
+import ReactDOM from 'react-dom';
 import FocusLock from 'react-focus-lock';
 import { GroupedVirtuoso, GroupedVirtuosoHandle } from 'react-virtuoso';
 import { emojiCategories, EmojiData } from '../../german-emoji-data';
@@ -260,7 +263,10 @@ export function EmojiPicker({
                                 index={spritesheetLookupArray.indexOf(e)}
                                 onSelect={() => {
                                     markRecent(emojiData);
-                                    onPick(e);
+
+                                    if (onPick) {
+                                        onPick(e);
+                                    }
                                 }}
                                 rowIndex={rowIndex}
                                 columnIndex={columnIndex}
@@ -271,7 +277,7 @@ export function EmojiPicker({
                 </EmojiRow>
             );
         },
-        [markRecent, rows]
+        [markRecent, onPick, rows]
     );
 
     const handleRangeChange = useCallback(
@@ -316,9 +322,54 @@ export function EmojiPicker({
             style.top = '100%';
     }
 
-    return (
+    const [styleWithAnchor, setStyleWithAnchor] = useState<CSSProperties>();
+
+    const refForRect = useMemo(() => {
+        if (!anchor) {
+            return createRef<HTMLElement>();
+        }
+        if ('current' in anchor) {
+            return anchor;
+        }
+
+        const ref = createRef() as MutableRefObject<HTMLElement>;
+        ref.current = anchor;
+
+        return ref;
+    }, [anchor]);
+
+    console.log({ refForRect });
+
+    const rect = useRect(refForRect);
+
+    console.log('Rect from hook', rect);
+
+    if (rect) {
+        delete style.top;
+        delete style.bottom;
+        delete style.left;
+        delete style.right;
+
+        switch (horizontal) {
+            case 'left':
+                style.left = rect.right - WIDTH;
+                break;
+            case 'right':
+                style.left = rect.left;
+        }
+
+        switch (vertical) {
+            case 'top':
+                style.top = rect.top - HEIGHT;
+                break;
+            case 'bottom':
+                style.top = rect.bottom;
+        }
+    }
+
+    const element = (
         <FocusLock>
-            <PopupContainer ref={windowRef} style={style} layout>
+            <PopupContainer ref={windowRef} style={styleWithAnchor || style}>
                 <SearchBarContainer>
                     <Input
                         iconLeft="far fa-search"
@@ -358,15 +409,24 @@ export function EmojiPicker({
             </PopupContainer>
         </FocusLock>
     );
+
+    if (anchor) {
+        return ReactDOM.createPortal(element, document.body);
+    } else {
+        return element;
+    }
 }
 
-const PopupContainer = styled(motion.div)`
-    position: absolute;
+const WIDTH = 320;
+const HEIGHT = 420;
+
+const PopupContainer = styled.div`
+    position: fixed;
 
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    height: 420px;
-    width: 320px;
+    height: ${HEIGHT}px;
+    width: ${WIDTH}px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
