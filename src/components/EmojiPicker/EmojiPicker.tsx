@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 import { useRect } from '@reach/rect';
+import { useFocusWithin } from '@react-aria/interactions';
 import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import Fuse from 'fuse.js';
 import React, {
     createRef,
     CSSProperties,
+    KeyboardEvent,
     MutableRefObject,
     RefObject,
     useCallback,
@@ -117,6 +119,12 @@ export function EmojiPicker({
     const [searchTerm, setSearchTerm] = useState('');
 
     const [fuseResults, setFuseResults] = useState(spritesheetLookupArray);
+
+    const { focusWithinProps } = useFocusWithin({
+        onBlurWithin() {
+            onHide();
+        },
+    });
 
     useEffect(() => {
         if (searchTerm.trim() !== '') {
@@ -365,9 +373,22 @@ export function EmojiPicker({
         return null;
     }
 
+    function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+        switch (event.key) {
+            case 'Escape':
+                onHide();
+                break;
+        }
+    }
+
     const element = (
         <FocusLock>
-            <PopupContainer ref={windowRef} style={style}>
+            <PopupContainer
+                ref={windowRef}
+                style={style}
+                onKeyDown={handleKeyDown}
+                {...focusWithinProps}
+            >
                 <SearchBarContainer>
                     <Input
                         iconLeft="far fa-search"
