@@ -7,6 +7,7 @@ import React, {
     useState,
 } from 'react';
 import { EmojiData } from '../german-emoji-data';
+import { modifySkinTone } from '../utils/modifySkinTone';
 import { AdaptiveEmoji } from './AdaptiveEmoji';
 import SkinTonePicker from './SkinTonePicker';
 
@@ -15,7 +16,7 @@ const ROW_SIZE = 8;
 interface Props {
     emojiData: EmojiData;
     index: number;
-    onSelect: () => void;
+    onSelect: (emoji: string) => void;
     rowIndex: number;
     columnIndex: number;
     windowRef: RefObject<HTMLElement>;
@@ -41,7 +42,7 @@ export function GridCell({
         if (skinToneModifiable) {
             setShowSkinTonePicker((current) => !current);
         } else {
-            onSelect();
+            onSelect(emoji);
         }
     }
 
@@ -115,7 +116,10 @@ export function GridCell({
                     emoji={emoji}
                     parentRef={buttonRef}
                     onClose={() => setShowSkinTonePicker(false)}
-                    onSelect={() => setShowSkinTonePicker(false)}
+                    onSelect={(skintone) => {
+                        setShowSkinTonePicker(false);
+                        onSelect(modifySkinTone(emoji, skintone));
+                    }}
                     parentId={emojiButtonId}
                     windowRef={windowRef}
                 />

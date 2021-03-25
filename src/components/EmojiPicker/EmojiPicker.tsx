@@ -269,11 +269,11 @@ export function EmojiPicker({
                             <GridCell
                                 emojiData={emojiData}
                                 index={spritesheetLookupArray.indexOf(e)}
-                                onSelect={() => {
+                                onSelect={(emoji) => {
                                     markRecent(emojiData);
 
                                     if (onPick) {
-                                        onPick(e);
+                                        onPick(emoji);
                                     }
                                 }}
                                 rowIndex={rowIndex}
