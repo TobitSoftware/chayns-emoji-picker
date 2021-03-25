@@ -322,8 +322,6 @@ export function EmojiPicker({
             style.top = '100%';
     }
 
-    const [styleWithAnchor, setStyleWithAnchor] = useState<CSSProperties>();
-
     const refForRect = useMemo(() => {
         if (!anchor) {
             return createRef<HTMLElement>();
@@ -338,11 +336,7 @@ export function EmojiPicker({
         return ref;
     }, [anchor]);
 
-    console.log({ refForRect });
-
-    const rect = useRect(refForRect);
-
-    console.log('Rect from hook', rect);
+    const rect = useRect(refForRect, { observe: show });
 
     if (rect) {
         delete style.top;
@@ -367,9 +361,13 @@ export function EmojiPicker({
         }
     }
 
+    if (!show) {
+        return null;
+    }
+
     const element = (
         <FocusLock>
-            <PopupContainer ref={windowRef} style={styleWithAnchor || style}>
+            <PopupContainer ref={windowRef} style={style}>
                 <SearchBarContainer>
                     <Input
                         iconLeft="far fa-search"
