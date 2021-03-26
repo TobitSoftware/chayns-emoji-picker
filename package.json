@@ -41,7 +41,7 @@
     "devDependencies": {
         "@babel/core": "^7.13.10",
         "@emotion/babel-plugin": "^11.2.0",
-        "@size-limit/preset-small-lib": "^4.10.1",
+        "@size-limit/preset-big-lib": "^4.10.1",
         "@storybook/addon-essentials": "^6.1.21",
         "@storybook/addon-links": "^6.1.21",
         "@storybook/addons": "^6.1.21",
@@ -87,11 +87,11 @@
     "size-limit": [
         {
             "path": "dist/chayns-emoji-picker.cjs.production.min.js",
-            "limit": "10 KB"
+            "limit": "150 KB"
         },
         {
             "path": "dist/chayns-emoji-picker.esm.js",
-            "limit": "10 KB"
+            "limit": "150 KB"
         }
     ]
 }
