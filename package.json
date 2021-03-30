@@ -79,7 +79,6 @@
         "typescript": "^4.2.3"
     },
     "peerDependencies": {
-        "chayns-components": ">=4.20.0",
         "react": ">=16.8.0"
     },
     "engines": {
