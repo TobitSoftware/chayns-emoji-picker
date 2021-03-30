@@ -12,6 +12,8 @@ export default function Icon({
     regular,
     solid,
     className,
+    // @ts-expect-error: Active is not an HTML prop, but gets passed in by emotion.
+    active: _,
     ...rest
 }: Props): ReactElement {
     const classes = ['react-chayns-icon', icon, className];

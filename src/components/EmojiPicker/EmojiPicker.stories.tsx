@@ -1,20 +1,27 @@
 import { Meta, Story } from '@storybook/react/types-6-0';
 import React, { useRef } from 'react';
-import { EmojiPicker } from './EmojiPicker';
+import { EmojiPicker, EmojiPickerProps } from './EmojiPicker';
 
 export default {
     title: 'EmojiPicker',
     component: EmojiPicker,
 } as Meta;
 
-const Template: Story = (args) => <EmojiPicker {...args} />;
+const Template: Story<EmojiPickerProps> = (args) => <EmojiPicker {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {};
 
-export const WithAnchor = (args) => <AnchorComponent {...args} />;
+export const WithAnchor: Story<EmojiPickerProps> = (args) => (
+    <AnchorComponent {...args} />
+);
+WithAnchor.args = {
+    show: true,
+    horizontal: 'left',
+    vertical: 'top',
+};
 
-function AnchorComponent(props) {
+function AnchorComponent(props: EmojiPickerProps) {
     const ref = useRef<HTMLDivElement | null>(null);
 
     return (

@@ -51,7 +51,7 @@ const categoryImages = [
     'fa-flag',
 ] as const;
 
-interface Props {
+export interface EmojiPickerProps {
     /**
      * Wether the popup-window to pick an emoji should be open.
      */
@@ -112,7 +112,7 @@ export function EmojiPicker({
     horizontal = 'left',
     vertical = 'top',
     anchor,
-}: Props) {
+}: EmojiPickerProps) {
     const listHandle = useRef<GroupedVirtuosoHandle | null>(null);
     const windowRef = useRef<HTMLDivElement | null>(null);
 
@@ -267,6 +267,7 @@ export function EmojiPicker({
 
                         return (
                             <GridCell
+                                key={e}
                                 emojiData={emojiData}
                                 index={spritesheetLookupArray.indexOf(e)}
                                 onSelect={(emoji) => {
