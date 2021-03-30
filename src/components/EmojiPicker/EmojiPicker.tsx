@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useRect } from '@reach/rect';
 import { useFocusWithin } from '@react-aria/interactions';
-import Input from 'chayns-components/lib/react-chayns-input/component/Input.js';
 import Fuse from 'fuse.js';
 import React, {
     createRef,
@@ -22,6 +21,7 @@ import { emojiCategories, EmojiData } from '../../german-emoji-data';
 import { isLocalStorageAvailable } from '../../utils/isLocalStorageAvailable';
 import CategoryRow from '../CategoryRow';
 import { GridCell } from '../GridCell';
+import Icon from '../Icon';
 
 const RECENTS_KEY = 'chayns-emoji-picker__recents';
 
@@ -390,13 +390,13 @@ export function EmojiPicker({
                 {...focusWithinProps}
             >
                 <SearchBarContainer>
-                    <Input
-                        iconLeft="far fa-search"
-                        design={Input.BORDER_DESIGN}
-                        placeholder="Finden"
+                    <EmojiSearchBar
+                        type="text"
                         value={searchTerm}
-                        onChange={setSearchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
+                        placeholder="Finden"
                     />
+                    <SearchIcon icon="fa-search" regular />
                 </SearchBarContainer>
                 <CategoryRow
                     groups={groups}
@@ -480,7 +480,30 @@ const PopupContainer = styled.div`
 `;
 
 const SearchBarContainer = styled.div`
-    padding: 8px 8px 0;
+    margin: 8px 8px 0;
+    position: relative;
+`;
+
+const EmojiSearchBar = styled.input`
+    width: 100%;
+    height: 42px;
+    padding: 0 10px 0 36px;
+
+    border: 1px solid rgba(160, 160, 160, 0.3);
+    border-radius: 3px;
+
+    appearance: none;
+    background-color: var(--chayns-color--000);
+`;
+
+const SearchIcon = styled(Icon)`
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+
+    color: var(--chayns-color--004);
 `;
 
 const EmojiCategoryHeader = styled.div`
