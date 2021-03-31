@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 import React, { ButtonHTMLAttributes, CSSProperties } from 'react';
 import { parse } from 'twemoji-parser';
 
+declare const __pkgVersion__: string;
+declare const __DEV__: boolean;
+
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     emoji: string;
     spritesheetIndex?: number;
@@ -79,7 +82,11 @@ const EmojiBackgroundImageContainer = styled.span<{ useSpritesheet: boolean }>`
     ${(props) =>
         props.useSpritesheet
             ? css`
-                  background-image: url(https://awesome-swartz-cfc28f.netlify.app/twemoji-spritesheet.png);
+                  background-image: ${`url(${
+                      __DEV__
+                          ? '/twemoji-spritesheet.png'
+                          : `https://unpkg.com/chayns-emoji-picker@${__pkgVersion__}/spritesheets/twemoji-spritesheet.png`
+                  })`};
                   background-repeat: no-repeat;
                   background-size: ${SPRITESHEET_COLUMNS * 100}%
                       ${SPRITESHEET_ROWS * 100}%;

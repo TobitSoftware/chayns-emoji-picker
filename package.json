@@ -12,7 +12,7 @@
     ],
     "scripts": {
         "analyze": "size-limit --why",
-        "build-storybook": "build-storybook",
+        "build-storybook": "build-storybook -s ./spritesheets",
         "build": "tsdx build",
         "check-types": "tsc",
         "dev": "tsdx watch",
@@ -20,7 +20,7 @@
         "lint": "eslint ./src",
         "prepare": "husky install && shx rm -rf .git/hooks && shx ln -s ../.husky .git/hooks",
         "size": "size-limit",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -p 6006 -s ./spritesheets",
         "test": "jest"
     },
     "resolutions": {
@@ -44,6 +44,7 @@
         "@babel/preset-react": "^7.13.13",
         "@babel/preset-typescript": "^7.13.0",
         "@emotion/babel-plugin": "^11.2.0",
+        "@rollup/plugin-replace": "^2.4.2",
         "@size-limit/preset-big-lib": "^4.10.2",
         "@storybook/addon-essentials": "^6.2.1",
         "@storybook/addon-links": "^6.2.1",

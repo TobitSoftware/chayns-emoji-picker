@@ -1,4 +1,6 @@
 const path = require('path');
+const { DefinePlugin } = require('webpack');
+const { version } = require('../package.json');
 
 const toPath = (_path) => path.join(process.cwd(), _path);
 
@@ -18,6 +20,13 @@ module.exports = {
                     'emotion-theming': toPath('node_modules/@emotion/react'),
                 },
             },
+            plugins: [
+                new DefinePlugin({
+                    __pkgVersion__: JSON.stringify(version),
+                    __DEV__: JSON.stringify(true),
+                }),
+                ...config.plugins,
+            ],
         };
     },
 };
