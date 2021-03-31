@@ -8,5 +8,7 @@ module.exports = {
                 __pkgVersion__: JSON.stringify(version),
             })
         );
+
+        return config;
     },
 };
