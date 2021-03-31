@@ -82,7 +82,7 @@ const EmojiBackgroundImageContainer = styled.span<{ useSpritesheet: boolean }>`
                   background-image: ${`url(${
                       // @ts-expect-error
                       __DEV__
-                          ? '/twemoji-spritesheet.png'
+                          ? './twemoji-spritesheet.png'
                           : // @ts-ignore: This only has to be ignored in editors, it will get replaced before TSC ever sees the code.
                             `https://unpkg.com/chayns-emoji-picker@${__pkgVersion__}/spritesheets/twemoji-spritesheet.png`
                   })`};
