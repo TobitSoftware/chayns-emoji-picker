@@ -4,7 +4,7 @@ const toPath = (_path) => path.join(process.cwd(), _path);
 
 // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
 module.exports = {
-    stories: ['../**/*.stories.@(ts|tsx|js|jsx)'],
+    stories: ['../src/**/*.stories.@(ts|tsx|js|jsx)'],
     addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
     webpackFinal: async (config) => {
         return {
