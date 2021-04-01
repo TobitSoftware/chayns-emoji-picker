@@ -7,7 +7,7 @@
         <img alt="MIT License" src="https://img.shields.io/github/license/tobitsoftware/chayns-emoji-picker?color=%23A855F7&labelColor=%2327272A&style=for-the-badge">
     </a>
     <a href="https://www.npmjs.com/package/chayns-emoji-picker/">
-        <img alt="npm version" src="https://img.shields.io/npm/v/chayns-emoji-picker?color=%23A855F7&labelColor=%236366F1&style=for-the-badge">
+        <img alt="npm version" src="https://img.shields.io/npm/v/chayns-emoji-picker?color=%236366F1&labelColor=%2327272A&style=for-the-badge">
     </a>
     <a href="https://github.com/tobitsoftware/chayns-emoji-picker/issues">
         <img alt="Open GitHub issues" src="https://img.shields.io/github/issues/tobitsoftware/chayns-emoji-picker?color=%2310B981&labelColor=%2327272A&style=for-the-badge">
