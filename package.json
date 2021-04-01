@@ -8,7 +8,7 @@
     "typings": "dist/index.d.ts",
     "files": [
         "dist",
-        "src"
+        "spritesheets"
     ],
     "scripts": {
         "analyze": "size-limit --why",
@@ -21,7 +21,8 @@
         "prepare": "husky install && shx rm -rf .git/hooks && shx ln -s ../.husky .git/hooks",
         "size": "size-limit",
         "storybook": "start-storybook -p 6006 -s ./spritesheets",
-        "test": "jest"
+        "test": "jest",
+        "prepublishOnly": "yarn build"
     },
     "resolutions": {
         "**/typescript": "^4.2.3"
