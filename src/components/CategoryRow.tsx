@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
 import React, { KeyboardEvent, ReactElement } from 'react';
 import { modulo } from '../utils/modulo';
 import Icon from './Icon';
@@ -15,41 +14,26 @@ export default function CategoryRow({
     activeCategoryIndex,
     onSelect,
 }: Props): ReactElement {
-    function focusPrevious() {
+    /**
+     * Focuses a neighbour of the current category.
+     *
+     * @param delta The delta to the currently selected category. `1` is the
+     *     next one, `-1` is the previous one.
+     */
+    function focusNeighbour(delta: number) {
         const activeElement = document.activeElement;
 
         // @ts-expect-error
         const activeIndex = Number(activeElement?.dataset?.categoryIndex);
 
         if (activeIndex != null) {
-            const newIndex = modulo(activeIndex - 1, groups.length);
+            const newIndex = modulo(activeIndex + delta, groups.length);
 
-            const nextElement = document.querySelector(
+            const nextElement = document.querySelector<HTMLElement>(
                 `[data-category-index="${newIndex}"]`
             );
 
             if (nextElement) {
-                // @ts-expect-error
-                nextElement.focus?.();
-            }
-        }
-    }
-
-    function focusNext() {
-        const activeElement = document.activeElement;
-
-        // @ts-expect-error
-        const activeIndex = Number(activeElement?.dataset?.categoryIndex);
-
-        if (activeIndex != null) {
-            const newIndex = modulo(activeIndex + 1, groups.length);
-
-            const nextElement = document.querySelector(
-                `[data-category-index="${newIndex}"]`
-            );
-
-            if (nextElement) {
-                // @ts-expect-error
                 nextElement.focus?.();
             }
         }
@@ -59,50 +43,44 @@ export default function CategoryRow({
         switch (event.key) {
             case 'ArrowUp':
                 event.preventDefault();
-                focusPrevious();
+                focusNeighbour(-1);
                 break;
             case 'ArrowRight':
-                focusNext();
+                focusNeighbour(1);
                 break;
             case 'ArrowDown':
                 event.preventDefault();
-                focusNext();
+                focusNeighbour(1);
                 break;
             case 'ArrowLeft':
-                focusPrevious();
+                focusNeighbour(-1);
                 break;
         }
     }
 
-    const buttons = groups.map((group, index) => {
-        const isActive = activeCategoryIndex === index;
-
-        return (
-            <CategoryButton
-                key={group.name}
-                layout
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                data-category-index={index}
-                tabIndex={isActive ? 0 : -1}
-                onClick={() => onSelect(index)}
-                onKeyDown={handleKeyDown}
-                aria-label={`Scrolle zu ${group.name}`}
-            >
-                <CategoryIcon
-                    icon={group.icon || ''}
-                    aria-hidden
-                    active={isActive}
-                    solid
-                />
-            </CategoryButton>
-        );
-    });
-
     return (
         <RowContainer>
-            <AnimatePresence initial={false}>{buttons}</AnimatePresence>
+            {groups.map((group, index) => {
+                const isActive = activeCategoryIndex === index;
+
+                return (
+                    <CategoryButton
+                        key={group.name}
+                        data-category-index={index}
+                        tabIndex={isActive ? 0 : -1}
+                        onClick={() => onSelect(index)}
+                        onKeyDown={handleKeyDown}
+                        aria-label={`Scrolle zu ${group.name}`}
+                    >
+                        <CategoryIcon
+                            icon={group.icon || ''}
+                            aria-hidden
+                            active={isActive}
+                            solid
+                        />
+                    </CategoryButton>
+                );
+            })}
         </RowContainer>
     );
 }
@@ -127,7 +105,7 @@ const CategoryIcon = styled(Icon)<{ active: boolean }>`
     transition: color 80ms cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const CategoryButton = styled(motion.button)`
+const CategoryButton = styled.button`
     padding: 0;
     margin: 0;
     width: 32px;
