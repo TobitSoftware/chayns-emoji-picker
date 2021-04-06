@@ -7,6 +7,10 @@ interface GeneralProps extends HTMLProps<HTMLSpanElement> {
 type Props = GeneralProps &
     ({ solid: true; regular?: false } | { solid?: false; regular: true });
 
+/**
+ * Renders an HTML `<i>`-tag that contains a Font Awesome icon. For a full list
+ * of icons see https://fontawesome.com/icons.
+ */
 export default function Icon({
     icon,
     regular,

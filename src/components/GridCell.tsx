@@ -22,6 +22,9 @@ interface Props {
     windowRef: RefObject<HTMLElement>;
 }
 
+/**
+ * A grid cell in the emoji grid.
+ */
 export function GridCell({
     emojiData,
     index,
@@ -46,6 +49,14 @@ export function GridCell({
         }
     }
 
+    /**
+     * Focuses a grid cell relative to the current one.
+     *
+     * @param rowDiff The difference in rows. `1` is one row down, `-1` is one
+     *     row up.
+     * @param columnDiff The difference in columns. `1` is one column to the
+     *     right, `-1` is one column to the left.
+     */
     function selectAdjacentGridCell(rowDiff: number, columnDiff: number) {
         let newRow = rowIndex + rowDiff;
         let newColumn = columnIndex + columnDiff;
@@ -62,13 +73,11 @@ export function GridCell({
         const rowIndexSelector = `[aria-rowindex="${newRow}"]`;
         const colIndexSelector = `[aria-colindex="${newColumn}"]`;
 
-        const element = document.querySelector(
+        const element = document.querySelector<HTMLElement>(
             classSelector + rowIndexSelector + colIndexSelector + ' > button'
         );
 
-        // @ts-expect-error
-        if (element && element.focus) {
-            // @ts-expect-error
+        if (element && typeof element.focus === 'function') {
             element.focus();
         }
     }

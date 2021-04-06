@@ -23,6 +23,9 @@ interface Props {
     windowRef: RefObject<HTMLElement>;
 }
 
+/**
+ * A small popover that allows choosing a skin tone for an emoji.
+ */
 export default function SkinTonePicker({
     emoji,
     onClose,
@@ -32,16 +35,31 @@ export default function SkinTonePicker({
     windowRef,
 }: Props): ReactElement {
     const popupRef = useRef<HTMLUListElement | null>(null);
-    const [refs] = useState(() =>
-        Array.from(Array(6), () => React.createRef<HTMLButtonElement>())
+
+    const [refs] = useState(
+        () =>
+            [
+                React.createRef<HTMLButtonElement>(),
+                React.createRef<HTMLButtonElement>(),
+                React.createRef<HTMLButtonElement>(),
+                React.createRef<HTMLButtonElement>(),
+                React.createRef<HTMLButtonElement>(),
+                React.createRef<HTMLButtonElement>(),
+            ] as const
     );
 
+    /**
+     * When focus moves out of the `SkinTonePicker` component, close it.
+     */
     const { focusWithinProps } = useFocusWithin({
         onBlurWithin() {
             onClose();
         },
     });
 
+    /**
+     * Focuses the previous skin tone choice.
+     */
     function focusPrevious() {
         const currentFocusIndex = refs.findIndex(
             (ref) => ref.current === document.activeElement
@@ -52,6 +70,9 @@ export default function SkinTonePicker({
         refs[newIndex]?.current?.focus();
     }
 
+    /**
+     * Focuses the next skin tone choice.
+     */
     function focusNext() {
         const currentFocusIndex = refs.findIndex(
             (ref) => ref.current === document.activeElement
@@ -62,7 +83,7 @@ export default function SkinTonePicker({
         refs[newIndex]?.current?.focus();
     }
 
-    function handleKeyDownPopup(event: KeyboardEvent<HTMLUListElement>) {
+    function handleKeyDown(event: KeyboardEvent<HTMLUListElement>) {
         event.stopPropagation();
 
         switch (event.key) {
@@ -88,6 +109,10 @@ export default function SkinTonePicker({
 
     const [positionStyles, setPositionStyles] = useState<CSSProperties>();
 
+    /**
+     * Measure the parent element node aswell as the popup node before rendering
+     * and set the position accordingly, so it doesn't cross the popups border.
+     */
     useLayoutEffect(() => {
         const windowRect = windowRef.current?.getBoundingClientRect();
         const parentRect = parentRef.current?.getBoundingClientRect();
@@ -119,7 +144,7 @@ export default function SkinTonePicker({
         >
             <SkinTonePopup
                 ref={popupRef}
-                onKeyDown={handleKeyDownPopup}
+                onKeyDown={handleKeyDown}
                 role="menu"
                 aria-orientation="horizontal"
                 aria-labelledby={parentId}
