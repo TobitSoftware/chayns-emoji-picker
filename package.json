@@ -35,7 +35,6 @@
         "framer-motion": "^4.1.2",
         "fuse.js": "^6.4.6",
         "react-focus-lock": "^2.5.0",
-        "react-intersection-observer": "^8.31.0",
         "react-virtuoso": "^1.6.0",
         "twemoji-parser": "^13.0.0"
     },
