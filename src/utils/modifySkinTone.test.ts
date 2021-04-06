@@ -6,7 +6,7 @@ test('should add skin color to a yellow emoji', () => {
     expect(modifySkinTone(emoji, 'darkBrown')).toBe('👍🏿');
 });
 
-test('should remove skin tone form a colored emoji', () => {
+test('should remove skin tone from a colored emoji', () => {
     const emoji = '👍🏿';
 
     expect(modifySkinTone(emoji, 'none')).toBe('👍');
