@@ -3,14 +3,45 @@ import React, { useRef } from 'react';
 import { EmojiPicker, EmojiPickerProps } from './EmojiPicker';
 
 export default {
-    title: 'EmojiPicker',
+    title: 'Demos/EmojiPicker',
     component: EmojiPicker,
 } as Meta;
 
-const Template: Story<EmojiPickerProps> = (args) => <EmojiPicker {...args} />;
+export const Relative: Story<EmojiPickerProps> = (args) => (
+    <RelativeComponent {...args} />
+);
+Relative.args = {
+    show: true,
+    horizontal: 'left',
+    vertical: 'top',
+};
 
-export const Default = Template.bind({});
-Default.args = {};
+function RelativeComponent(props: EmojiPickerProps) {
+    return (
+        <>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100vh',
+                }}
+            >
+                <div
+                    style={{
+                        width: 20,
+                        height: 20,
+                        backgroundColor: 'palegoldenrod',
+                        borderRadius: 3,
+                        position: 'relative',
+                    }}
+                >
+                    <EmojiPicker {...props} />
+                </div>
+            </div>
+        </>
+    );
+}
 
 export const WithAnchor: Story<EmojiPickerProps> = (args) => (
     <AnchorComponent {...args} />

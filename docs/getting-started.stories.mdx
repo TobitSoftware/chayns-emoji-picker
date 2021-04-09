@@ -1,0 +1,58 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting Started" />
+
+# Getting Started
+
+## Setup
+
+First off all you have to install the package.
+
+```bash
+# Yarn
+yarn add chayns-emoji-picker
+
+# NPM
+npm i chayns-emoji-picker
+```
+
+Then you can import the component in your code:
+
+```ts
+import { EmojiPicker } from 'chayns-emoji-picker';
+```
+
+## Usage
+
+The easiest way to use the component is by adding it inside of the component you
+want to use as the "anchor", e.g. the button that should open the picker.
+
+The anchor must have either `position: relative`, `position: absolute` or
+`position: fixed` for the popup to be correctly positioned.
+
+You always have to pass the `show` and `onHide` props to the picker like so:
+
+```ts
+import React, { useState } from 'react';
+
+export function MyComponent() {
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    return (
+        <button
+            style={{ position: 'relative' }}
+            onClick={() => setShowEmojiPicker(true)}
+        >
+            Show Emoji Picker
+            <EmojiPicker
+                show={showEmojiPicker}
+                onHide={() => setShowEmojiPicker(false)}
+            />
+        </button>
+    );
+}
+```
+
+If this is not an option for you, e.g. if the popup is cut off because one of
+the parent elements of the button uses `overflow: hidden`, refer to the
+"Positioning" docs.

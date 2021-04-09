@@ -313,7 +313,9 @@ export function EmojiPicker({
         [groups]
     );
 
-    const style: CSSProperties = {};
+    const style: CSSProperties = {
+        position: 'absolute',
+    };
 
     switch (horizontal) {
         case 'left':
@@ -352,6 +354,8 @@ export function EmojiPicker({
         delete style.bottom;
         delete style.left;
         delete style.right;
+
+        style.position = 'fixed';
 
         switch (horizontal) {
             case 'left':
@@ -441,7 +445,6 @@ const WIDTH = 320;
 const HEIGHT = 420;
 
 const PopupContainer = styled.div`
-    position: fixed;
     height: ${HEIGHT}px;
     width: ${WIDTH}px;
     overflow: hidden;

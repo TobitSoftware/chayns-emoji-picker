@@ -5,8 +5,12 @@ const { version } = require('../package.json');
 const toPath = (_path) => path.join(process.cwd(), _path);
 
 // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
+/** @type {import("@storybook/react/types").StorybookConfig} */
 module.exports = {
-    stories: ['../src/**/*.stories.@(ts|tsx|js|jsx)'],
+    stories: [
+        '../src/**/*.stories.@(ts|tsx|js|jsx)',
+        '../docs/**/*.stories.@(md|mdx)',
+    ],
     addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
     webpackFinal: async (config) => {
         return {

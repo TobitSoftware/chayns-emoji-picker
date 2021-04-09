@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Positioning" />
+
+# Positioning
+
+The Emoji-Picker will always be placed relative to an anchor element. An anchor
+element is usually also the trigger for the popup, e.g. a button with a smiley
+on it.
+
+You can control in which direction the `<EmojiPicker>` will primarily go. The
+`vertical` prop controls wether the Picker will go above or below the anchor,
+while the `horizontal` prop controls wether the picker should go to the left or
+the right.
+
+For establishing a relative position to the anchor node there are two different
+modes:
+
+## Relative Positioning
+
+The default positioning mode, relative positioning, requires you to place the
+`<EmojiPicker>` component inside of the anchor element you want to use.
+
+The anchor element then requires a relative or absolute positioning. Example:
+
+```js
+import React, { useState } from 'react';
+
+export function MyComponent() {
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    return (
+        <button
+            style={{ position: 'relative' }}
+            onClick={() => setShowEmojiPicker(true)}
+        >
+            Show Emoji Picker
+            <EmojiPicker
+                show={showEmojiPicker}
+                onHide={() => setShowEmojiPicker(false)}
+            />
+        </button>
+    );
+}
+```
+
+Here the `<EmojiPicker>` component makes use of `position: absolute` to position
+itself relative to the button.
+
+> This is the recommended way to use the component, if possible.
+
+## Positioning With Measurement
+
+Sometimes relative positioning might not be possible. A parent component of the
+anchor node may specify `overflow: hidden`, which would cut the Picker off.
+
+To tackle these kinds of situations there is also another positioning mode that
+constantly measures the anchor node and positions the `<EmojiPicker>` component
+fixed. The DOM-node is injected as a child directly into `document.body`.
+
+To activate this mode pass the `anchor` prop. It should either be a HTMLElement
+directly (e.g. received via `document.querySelector`) or a React Ref object of
+the anchor element.
