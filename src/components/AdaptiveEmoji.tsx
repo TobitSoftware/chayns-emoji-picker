@@ -20,7 +20,7 @@ export const AdaptiveEmoji = React.forwardRef<HTMLButtonElement, Props>(
         const shouldUseTwemoji = isWindows;
 
         let style: CSSProperties | undefined;
-        const useSpritesheet = spritesheetIndex != null;
+        const useSpritesheet = spritesheetIndex != null && shouldUseTwemoji;
 
         if (shouldUseTwemoji) {
             if (spritesheetIndex != null) {
